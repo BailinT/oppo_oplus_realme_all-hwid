@@ -1,0 +1,25 @@
+# One lowercase HWID per line. Blank lines and lines beginning with # are ignored.
+# 合并自: oppo_oplus_realme_sm8650/sm8750/sm8850-hwid + 5x-hwid
+0x0000046a10dfd755
+11d9ee68
+3f339a0f
+5ffc40e3
+5laeyx7d4pd6z5pr
+610538e6
+64a7aa9c
+6b2534bf
+7x95r4rofajrssf6
+831b8814
+88bd2597
+8d4d4b6c
+8e59d247
+a4651c19
+abbe0d2c
+bb94de55
+cd784bf
+fmzxqgrgjrqkcuyp
+ivif5pfqcqsoydrg
+jnz9c6gyibdyyxyp
+kf7pqojzsgjvzhro
+socaz55taujreykn
+ypaun7pfovbmvcp7
