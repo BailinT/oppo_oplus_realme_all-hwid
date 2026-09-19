@@ -2,7 +2,7 @@
 # 源: OnePlusOSS/android_kernel_5.10_oneplus_mt6895 @ mt6895_t_13.1.0_oneplus_ace (实测 Makefile = 5.10.149)
 # 首跑按「同芯片最新分支」; 其他芯片同 x 变体后续按需扩展
 # ============================================================
-name: 5.10.149 欧加真OKI内核快速构建(mt6895)
+name: 5.10.149 (天玑特供)欧加真OKI内核快速构建(mt6895)
 
 env:
   TZ: Asia/Shanghai
@@ -698,7 +698,7 @@ jobs:
           if [[ -n "${{ inputs.kernel_suffix }}" ]]; then
             AK3_NAME=AnyKernel3_${KSU_TYPENAME}_${{ env.KSUVER }}_${{ env.KERNEL_VERSION }}_${{ inputs.kernel_suffix }}.zip
           else
-            AK3_NAME=AnyKernel3_${KSU_TYPENAME}_${{ env.KSUVER }}_${{ env.KERNEL_VERSION }}_${{ env.KERNEL_NAME }}.zip
+            AK3_NAME=AnyKernel3_${KSU_TYPENAME}_${{ env.KSUVER }}_${{ env.KERNEL_VERSION }}_${{ env.KERNEL_NAME }}-mtk.zip
           fi
           zip -r ../$AK3_NAME ./*
           echo "ak3name=$AK3_NAME" >> $GITHUB_OUTPUT
