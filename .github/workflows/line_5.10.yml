@@ -96,7 +96,30 @@ on:
         default: ""
 
 jobs:
+  guard:
+    name: 入口自检（uses 仓库名校验）
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - name: 校验 line 文件 uses 声明指向本仓 modules 分支
+        run: |
+          total=$(grep -hE "^[[:space:]]*uses: [^ ]*fastbuild_" .github/workflows/line_*.yml | wc -l)
+          if [ "$total" -lt 1 ]; then
+            echo "::error::line 文件中未找到任何模块 uses 声明"
+            exit 1
+          fi
+          bad=$(grep -hE "^[[:space:]]*uses: [^ ]*fastbuild_" .github/workflows/line_*.yml | grep -vE "^[[:space:]]*uses: ${GITHUB_REPOSITORY}/\.github/workflows/fastbuild_[A-Za-z0-9_.-]+\.yml@modules[[:space:]]*$" || true)
+          if [ -n "$bad" ]; then
+            echo "::error::uses 声明不符合规范——必须指向 ${GITHUB_REPOSITORY} 的 modules 分支模块（复制 line 文件时勿忘改仓库名）："
+            echo "$bad"
+            exit 1
+          fi
+          echo "OK: $total 处 uses 全部指向 ${GITHUB_REPOSITORY}@modules"
   v66:
+    needs: guard
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '66' }}
     uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.66.yml@modules
     with:
@@ -115,6 +138,7 @@ jobs:
         kernel_suffix: ${{ inputs.kernel_suffix }}
     secrets: inherit
   v110:
+    needs: guard
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '110' }}
     uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.110.yml@modules
     with:
@@ -133,6 +157,7 @@ jobs:
         kernel_suffix: ${{ inputs.kernel_suffix }}
     secrets: inherit
   v149:
+    needs: guard
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '149' }}
     uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.149.yml@modules
     with:
@@ -151,6 +176,7 @@ jobs:
         kernel_suffix: ${{ inputs.kernel_suffix }}
     secrets: inherit
   v168:
+    needs: guard
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '168' }}
     uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.168.yml@modules
     with:
@@ -169,6 +195,7 @@ jobs:
         kernel_suffix: ${{ inputs.kernel_suffix }}
     secrets: inherit
   v198:
+    needs: guard
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '198' }}
     uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.198.yml@modules
     with:
@@ -187,6 +214,7 @@ jobs:
         kernel_suffix: ${{ inputs.kernel_suffix }}
     secrets: inherit
   v209:
+    needs: guard
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '209' }}
     uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.209.yml@modules
     with:
@@ -205,6 +233,7 @@ jobs:
         kernel_suffix: ${{ inputs.kernel_suffix }}
     secrets: inherit
   v226:
+    needs: guard
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '226' }}
     uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.226.yml@modules
     with:
@@ -223,6 +252,7 @@ jobs:
         kernel_suffix: ${{ inputs.kernel_suffix }}
     secrets: inherit
   v236:
+    needs: guard
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '236' }}
     uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.236.yml@modules
     with:
