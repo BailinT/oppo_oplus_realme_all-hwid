@@ -1,10 +1,10 @@
 # ============================================================
-# 线级入口: 一次 dispatch 构建本线全部 6 个子版本(23/23_gki/23_mtk/38/58/58_mtk)
+# 线级入口: 一次 dispatch 构建本线全部 6 个子版本(23/23_gki/23_mtk/38/58/58_mtk/69_gki)
 # 单版本 workflow 已转为 workflow_call 可复用模块(不在 Actions 列表显示)
 # only_sub_level 留空 = 全部; 填子版本号 = 只建该版本
 # 每个子版本独立出 AK3 包、独立 release, 与原单版本构建行为一致
 # ============================================================
-name: "内核构建 - Linux 6.12（6 个子版本: 23/23_gki/23_mtk/38/58/58_mtk）"
+name: "内核构建 - Linux 6.12（6 个子版本: 23/23_gki/23_mtk/38/58/58_mtk/69_gki）"
 
 permissions:
   contents: write
@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       only_sub_level:
-        description: '只构建指定子版本(留空=全部; 可填 23/23_gki/23_mtk/38/58/58_mtk)'
+        description: '只构建指定子版本(留空=全部; 可填 23/23_gki/23_mtk/38/58/58_mtk/69_gki)'
         required: false
         type: string
         default: ''
@@ -231,6 +231,26 @@ jobs:
     needs: guard
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '58_mtk' }}
     uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.12.58_mtk.yml@modules
+    with:
+        ksu_type: ${{ inputs.ksu_type }}
+        susfs_enable: ${{ inputs.susfs_enable }}
+        kpm_enable: ${{ inputs.kpm_enable }}
+        lz4_enable: ${{ inputs.lz4_enable }}
+        lz4kd_enable: ${{ inputs.lz4kd_enable }}
+        bbr_enable: ${{ inputs.bbr_enable }}
+        droidspaces_enable: ${{ inputs.droidspaces_enable }}
+        better_net: ${{ inputs.better_net }}
+        adios_enable: ${{ inputs.adios_enable }}
+        rekernel_enable: ${{ inputs.rekernel_enable }}
+        baseband_guard: ${{ inputs.baseband_guard }}
+        ccache_update: ${{ inputs.ccache_update }}
+        ccache_debug: ${{ inputs.ccache_debug }}
+        kernel_suffix: ${{ inputs.kernel_suffix }}
+    secrets: inherit
+  v69_gki:
+    needs: guard
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '69_gki' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.12.69_gki.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
