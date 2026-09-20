@@ -1,12 +1,12 @@
 # 欧加真全版本内核快速构建 · HWID 校验版（5.10 / 5.15 / 6.1 / 6.6 / 6.12）
 
 OPPO/一加/真我 GKI 内核自动化编译 + **HWID 白名单校验**。
-基于 `BailinT/oppo_oplus_realme_all`（非 hwid 大仓，35 个 workflow 全绿），只允许 `hwid/allowlist.txt` 中的设备启动。
+基于 `BailinT/oppo_oplus_realme_all`（非 hwid 大仓，36 个 workflow 全绿），只允许 `hwid/allowlist.txt` 中的设备启动。
 
 ## 与 `oppo_oplus_realme_all` 的差异
 
 1. **Checkout 步骤**：首个 step 拉取本仓（私有资源本地 cp，不再 wget 自身）
-2. **HWID 注入步骤**：初始化源码后注入 `hwid_lock.c` + `hwid_allowlist.h`（35 棵树锚点全部实测存在）
+2. **HWID 注入步骤**：初始化源码后注入 `hwid_lock.c` + `hwid_allowlist.h`（36 棵树锚点全部实测存在；69_gki 与 23_gki 同系树，09-21 验证构建通过）
 3. **CCACHE_KEY 加 `-hwid` 后缀**：缓存与非 hwid 仓互不干扰
 4. 其余完全一致（含 5.10 的 LTO/CFI 修复、三仓合并的全部资源）
 
@@ -18,7 +18,7 @@ OPPO/一加/真我 GKI 内核自动化编译 + **HWID 白名单校验**。
 
 当前 allowlist：**23 个设备 ID**（合并自 sm8650/sm8750/sm8850-hwid + 5x-hwid 四仓）。
 
-## 支持的内核版本（35 个 workflow）
+## 支持的内核版本（36 个 workflow）
 
 | 系列 | x |
 |---|---|
@@ -26,7 +26,7 @@ OPPO/一加/真我 GKI 内核自动化编译 + **HWID 白名单校验**。
 | 5.15 | 74 / 123 / 167 / 180 |
 | 6.1 | 57 / 75 / 115 / 118 / 128 / 134 / 141 / 157 |
 | 6.6 | 30 / 50 / 56 / 57 / 66 / 89 / 118（含 `_mtk` 变体） |
-| 6.12 | 23 / 38 / 58（含 `_gki` / `_mtk` 变体） |
+| 6.12 | 23 / 38 / 58 / 69（含 `_gki` / `_mtk` 变体） |
 
 ## 加设备流程
 
@@ -37,8 +37,8 @@ OPPO/一加/真我 GKI 内核自动化编译 + **HWID 白名单校验**。
 
 ## 状态
 
-- [x] 35 个 workflow 合并改造（Checkout + HWID 注入 + 资源本地化 + 缓存隔离）
-- [x] 35 棵树注入锚点实测（6.6 树的 main.c 结构差异已确认兼容）
+- [x] 36 个 workflow 合并改造（Checkout + HWID 注入 + 资源本地化 + 缓存隔离）
+- [x] 36 棵树注入锚点实测（6.6 树的 main.c 结构差异已确认兼容）
 - [x] allowlist 合并 23 个设备 ID
 - [ ] 首次构建验证
 
