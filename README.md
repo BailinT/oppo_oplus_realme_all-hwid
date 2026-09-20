@@ -10,6 +10,13 @@ OPPO/一加/真我 GKI 内核自动化编译 + **HWID 白名单校验**。
 3. **CCACHE_KEY 加 `-hwid` 后缀**：缓存与非 hwid 仓互不干扰
 4. 其余完全一致（含 5.10 的 LTO/CFI 修复、三仓合并的全部资源）
 
+## ⚠️ 线级入口与模块分支（改动前必读）
+
+- Actions 列表只有 5 个线级入口「内核构建 - Linux 5.10/5.15/6.1/6.6/6.12」；`only_sub_level` 填版本号可只建单个。
+- 35 个单版本构建文件是 `workflow_call` 可复用模块，放在 **本仓 `modules` 分支**。
+- **本仓 5 个 line_*.yml 的 `uses:` 必须逐字指向 `BailinT/oppo_oplus_realme_all-hwid`**（跨 ref 调用不支持变量语法，只能硬编码）。**若从非 hwid 大仓复制 line 文件，务必把仓库名换成带 `-hwid` 的**——否则会静默调用非 hwid 模块，构建全绿但产物没有 HWID 锁、不报任何错。
+- 复核命令：`grep -h "uses:" .github/workflows/line_*.yml | grep -v "oppo_oplus_realme_all-hwid"` 必须为空。
+
 ## HWID 机制（5-key 增强版）
 
 读取 `androidboot.chipid` → `androidboot.cpuid` → `androidboot.emmcid` → `androidboot.serialno` → `oplusboot.serialno`，
@@ -18,7 +25,7 @@ OPPO/一加/真我 GKI 内核自动化编译 + **HWID 白名单校验**。
 
 当前 allowlist：**23 个设备 ID**（合并自 sm8650/sm8750/sm8850-hwid + 5x-hwid 四仓）。
 
-## 支持的内核版本（35 个 workflow）
+## 支持的内核版本（5 条线 × 35 个子版本）
 
 | 系列 | x |
 |---|---|
