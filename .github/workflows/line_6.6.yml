@@ -107,7 +107,7 @@ on:
 jobs:
   v30:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '30' }}
-    uses: ./.github/workflows/fastbuild_6.6.30.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.30.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -126,7 +126,7 @@ jobs:
     secrets: inherit
   v50:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '50' }}
-    uses: ./.github/workflows/fastbuild_6.6.50.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.50.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -145,7 +145,7 @@ jobs:
     secrets: inherit
   v56:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '56' }}
-    uses: ./.github/workflows/fastbuild_6.6.56.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.56.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -164,7 +164,7 @@ jobs:
     secrets: inherit
   v57:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '57' }}
-    uses: ./.github/workflows/fastbuild_6.6.57.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.57.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -183,7 +183,7 @@ jobs:
     secrets: inherit
   v66:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '66' }}
-    uses: ./.github/workflows/fastbuild_6.6.66.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.66.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -202,7 +202,7 @@ jobs:
     secrets: inherit
   v89:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '89' }}
-    uses: ./.github/workflows/fastbuild_6.6.89.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.89.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -221,7 +221,7 @@ jobs:
     secrets: inherit
   v89_mtk:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '89_mtk' }}
-    uses: ./.github/workflows/fastbuild_6.6.89_mtk.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.89_mtk.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -240,7 +240,7 @@ jobs:
     secrets: inherit
   v118:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '118' }}
-    uses: ./.github/workflows/fastbuild_6.6.118.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.118.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -259,7 +259,7 @@ jobs:
     secrets: inherit
   v118_mtk:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '118_mtk' }}
-    uses: ./.github/workflows/fastbuild_6.6.118_mtk.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.118_mtk.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}

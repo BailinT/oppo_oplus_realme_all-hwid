@@ -107,7 +107,7 @@ on:
 jobs:
   v23:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '23' }}
-    uses: ./.github/workflows/fastbuild_6.12.23.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.12.23.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -126,7 +126,7 @@ jobs:
     secrets: inherit
   v23_gki:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '23_gki' }}
-    uses: ./.github/workflows/fastbuild_6.12.23_gki.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.12.23_gki.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -145,7 +145,7 @@ jobs:
     secrets: inherit
   v23_mtk:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '23_mtk' }}
-    uses: ./.github/workflows/fastbuild_6.12.23_mtk.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.12.23_mtk.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -164,7 +164,7 @@ jobs:
     secrets: inherit
   v38:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '38' }}
-    uses: ./.github/workflows/fastbuild_6.12.38.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.12.38.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -183,7 +183,7 @@ jobs:
     secrets: inherit
   v58:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '58' }}
-    uses: ./.github/workflows/fastbuild_6.12.58.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.12.58.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -202,7 +202,7 @@ jobs:
     secrets: inherit
   v58_mtk:
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '58_mtk' }}
-    uses: ./.github/workflows/fastbuild_6.12.58_mtk.yml
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.12.58_mtk.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
