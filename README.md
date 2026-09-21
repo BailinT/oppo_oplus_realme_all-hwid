@@ -8,7 +8,12 @@ OPPO/一加/真我 GKI 内核自动化编译 + **HWID 白名单校验**。
 1. **Checkout 步骤**：首个 step 拉取本仓（私有资源本地 cp，不再 wget 自身）
 2. **HWID 注入步骤**：初始化源码后注入 `hwid_lock.c` + `hwid_allowlist.h`（36 棵树锚点全部实测存在；69_gki 与 23_gki 同系树，09-21 验证构建通过）
 3. **CCACHE_KEY 加 `-hwid` 后缀**：缓存与非 hwid 仓互不干扰
-4. 其余完全一致（含 5.10 的 LTO/CFI 修复、三仓合并的全部资源）
+4. 其余完全一致（含 5.10 的 LTO/CFI 修复、三仓合并的全部资源、3 个仓库维护 workflow）
+
+## 构建入口（Actions 列表 8 个）
+
+- **5 个内核构建线**：`内核构建 - Linux 5.10/5.15/6.1/6.6/6.12`，一次 dispatch 建整线；`only_sub_level` 填子版本号 = 只建该版本
+- **3 个仓库维护工具**：`发布测试`（造测试包验证 release 流程）/ `清理仓库工作流`（清 Actions 历史）/ `清理全部ccache缓存`（需输入 DELETE 确认）
 
 ## HWID 机制（5-key 增强版）
 
