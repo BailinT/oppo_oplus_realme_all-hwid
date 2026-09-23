@@ -1,0 +1,11 @@
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -156,7 +156,7 @@
+ $(obj)/config_data.gz: $(obj)/config_data FORCE
+ 	$(call if_changed,gzip)
+ 
+-filechk_cat = cat $<
++filechk_cat = grep -vE 'CONFIG_KSU|KernelSU|SUSFS|NOMOUNT' $<
+ 
+ $(obj)/config_data: $(KCONFIG_CONFIG) FORCE
+ 	$(call filechk,cat)
