@@ -383,6 +383,9 @@ jobs:
           sed -i 's/check_defconfig//' ./common/build.config.gki
           #跳过将uapi标准头安装到 usr/include 目录的不必要操作，节省编译时间
           echo "CONFIG_HEADERS_INSTALL=n" >> ./common/arch/arm64/configs/gki_defconfig
+          # IKCONFIG 内容脱敏: /proc/config.gz 嵌入配置过滤 CONFIG_KSU/KernelSU/SUSFS/NOMOUNT 行(2026-09-24 防泄露; 文件与权限不动)
+          wget https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/$GITHUB_REF_NAME/other_patch/ikconfig_sanitize-6.1.patch -O ./common/ikconfig_sanitize.patch
+          ( cd ./common && patch -p1 -F 3 < ikconfig_sanitize.patch )
           # 应用 CVE_2026_43499 修复补丁
           cd common
           cp "$GITHUB_WORKSPACE/other_patch/cve-2026-43499-rtmutex-6.1.patch" .
