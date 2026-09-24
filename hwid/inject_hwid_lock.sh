@@ -51,14 +51,5 @@ echo '};' >> "$HEADER_FILE"
 grep -q '^obj-y.*hwid_lock\.o' "$KERNEL_DIR/init/Makefile" || \
   sed -i '/^obj-y.*main\.o/ s/$/ hwid_lock.o/' "$KERNEL_DIR/init/Makefile"
 
-if ! grep -q 'void __init hwid_lock_verify(void);' "$KERNEL_DIR/init/main.c"; then
-  sed -i '/^static int kernel_init(void \*);/a void __init hwid_lock_verify(void);' "$KERNEL_DIR/init/main.c"
-fi
-
-if ! grep -q 'hwid_lock_verify();' "$KERNEL_DIR/init/main.c"; then
-  sed -i '/^[[:space:]]*setup_command_line(command_line);/a\	hwid_lock_verify();' "$KERNEL_DIR/init/main.c"
-fi
-
 grep -q 'hwid_lock.o' "$KERNEL_DIR/init/Makefile"
-grep -q 'hwid_lock_verify();' "$KERNEL_DIR/init/main.c"
 echo "HWID lock injected with $HWID_COUNT allowed device(s)"
