@@ -23,3 +23,5 @@ jnz9c6gyibdyyxyp
 kf7pqojzsgjvzhro
 socaz55taujreykn
 ypaun7pfovbmvcp7
+# RedMagic 11 Pro+ (NX809J, SM8850/canoe, androidboot.emmcid, 2026-09-24)
+45c2006e
