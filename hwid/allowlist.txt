@@ -25,3 +25,5 @@ socaz55taujreykn
 ypaun7pfovbmvcp7
 # RedMagic 11 Pro+ (NX809J, SM8850/canoe, androidboot.emmcid, 2026-09-24)
 45c2006e
+# OnePlus Ace 6T (PLR110, SM8845/canoe, androidboot.chipid, 2026-09-25)
+412a3eb6
