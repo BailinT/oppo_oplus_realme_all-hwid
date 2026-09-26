@@ -393,6 +393,8 @@ jobs:
           #添加对 Mountify (backslashxx/mountify) 模块的支持
           echo "CONFIG_TMPFS_XATTR=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_TMPFS_POSIX_ACL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          # 对齐原厂(PGZ110 竞速版实测 bootloop 定案): 原厂无 STACKPROTECTOR_PER_TASK, 全局 __stack_chk_guard 必须导出, 否则 vendor 模块 unknown symbol 全灭
+          echo "# CONFIG_STACKPROTECTOR_PER_TASK is not set" >> ./common/arch/arm64/configs/gki_defconfig
           if [[ ${{ inputs.lz4kd_enable }} == 'true' ]]; then
             echo "CONFIG_ZSMALLOC=y" >> ./common/arch/arm64/configs/gki_defconfig
             echo "CONFIG_CRYPTO_LZ4HC=y" >> ./common/arch/arm64/configs/gki_defconfig
