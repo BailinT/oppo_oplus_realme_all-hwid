@@ -25,3 +25,5 @@ socaz55taujreykn
 ypaun7pfovbmvcp7
 # RedMagic 11 Pro+ (NX809J, SM8850/canoe, androidboot.emmcid, 2026-09-24)
 45c2006e
+# OnePlus Ace 5 Ultra (PLC110, MT6991, androidboot.chipid, 2026-09-26)
+z9eiyhw8wg65vo79
