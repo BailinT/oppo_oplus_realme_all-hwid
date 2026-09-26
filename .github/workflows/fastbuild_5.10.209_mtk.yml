@@ -265,6 +265,8 @@ jobs:
         run: |
           # 进入内核工作目录
           cd kernel_workspace
+          # 原厂配置基线(PGZ110 竞速版 15.0.0.500 实测 IKCFG): 消除 gki_defconfig 缺失 OEM 内建驱动的类别性偏差 (自 all 仓 v7 配方同步)
+          cp "$GITHUB_WORKSPACE/config/mt6895_stock_defconfig" ./common/arch/arm64/configs/gki_defconfig
           # 原厂配置基线(PGZ110 竞速版 15.0.0.500 实测 IKCFG): 消除 gki_defconfig 缺失 OEM 内建驱动(DRM/充电/EAS/UFS特性等 179 项 =y)的类别性偏差
           cp "$GITHUB_WORKSPACE/config/mt6895_stock_defconfig" ./common/arch/arm64/configs/gki_defconfig
           if [[ ${{ inputs.ksu_type }} == "sukisu" || ${{ inputs.ksu_type }} == "resukisu" ]]; then
@@ -649,6 +651,9 @@ jobs:
             make -j$(nproc --all) LLVM=1 LLVM_IAS=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="ccache clang" LD="ld.lld" HOSTLD=ld.lld O=out KCFLAGS+=-O2 KCFLAGS+=-Wno-error olddefconfig
             if grep -q "^CONFIG_LTO_CLANG_THIN=y" out/.config; then echo "已切换为 ThinLTO"; else echo "警告: ThinLTO 未生效"; fi
           fi
+          # 通用清障: 原厂配置启用的内建驱动在公开树缺源码目录(死链) -> 建 stub 让 make 跳过 (自 all 仓 v7 配方同步)
+          cp "$GITHUB_WORKSPACE/scripts/stub_missing_drivers.py" /tmp/stub_missing_drivers.py
+          python3 /tmp/stub_missing_drivers.py
           make -j$(nproc --all) LLVM=1 LLVM_IAS=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="$(pwd)/cc-wrapper" LD="$(pwd)/ld-wrapper" HOSTLD=ld.lld O=out KCFLAGS+=-O2 KCFLAGS+=-Wno-error KCFLAGS+=-Wno-error=strict-prototypes Image
           
           # 编译后时间劫持二次校验
