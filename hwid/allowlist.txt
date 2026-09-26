@@ -27,3 +27,5 @@ ypaun7pfovbmvcp7
 45c2006e
 # OnePlus Ace 6T (PLR110, SM8845/canoe, androidboot.chipid, 2026-09-25)
 412a3eb6
+# OnePlus Ace 5 Ultra (PLC110, MT6991, androidboot.chipid, 2026-09-26)
+z9eiyhw8wg65vo79
