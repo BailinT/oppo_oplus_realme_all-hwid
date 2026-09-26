@@ -1,10 +1,10 @@
 # ============================================================
-# 线级入口: 一次 dispatch 构建本线全部 8 个子版本(66/110/149/168/198/209/226/236)
+# 线级入口: 一次 dispatch 构建本线全部 9 个子版本(66/110/149/168/198/209/209_mtk/226/236)
 # 单版本 workflow 已转为 workflow_call 可复用模块(不在 Actions 列表显示)
 # only_sub_level 留空 = 全部; 填子版本号 = 只建该版本
 # 每个子版本独立出 AK3 包、独立 release, 与原单版本构建行为一致
 # ============================================================
-name: "内核构建 - Linux 5.10（8 个子版本: 66/110/149/168/198/209/226/236）"
+name: "内核构建 - Linux 5.10（9 个子版本: 66/110/149/168/198/209/209_mtk/226/236）"
 
 permissions:
   contents: write
@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       only_sub_level:
-        description: '只构建指定子版本(留空=全部; 可填 66/110/149/168/198/209/226/236)'
+        description: '只构建指定子版本(留空=全部; 可填 66/110/149/168/198/209/209_mtk/226/236)'
         required: false
         type: string
         default: ''
@@ -217,6 +217,25 @@ jobs:
     needs: guard
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '209' }}
     uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.209.yml@modules
+    with:
+        ksu_type: ${{ inputs.ksu_type }}
+        susfs_enable: ${{ inputs.susfs_enable }}
+        kpm_enable: ${{ inputs.kpm_enable }}
+        lz4_enable: ${{ inputs.lz4_enable }}
+        lz4kd_enable: ${{ inputs.lz4kd_enable }}
+        bbr_enable: ${{ inputs.bbr_enable }}
+        better_net: ${{ inputs.better_net }}
+        ssg_enable: ${{ inputs.ssg_enable }}
+        rekernel_enable: ${{ inputs.rekernel_enable }}
+        baseband_guard: ${{ inputs.baseband_guard }}
+        ccache_update: ${{ inputs.ccache_update }}
+        ccache_debug: ${{ inputs.ccache_debug }}
+        kernel_suffix: ${{ inputs.kernel_suffix }}
+    secrets: inherit
+  v209_mtk:
+    needs: guard
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '209_mtk' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.209_mtk.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
