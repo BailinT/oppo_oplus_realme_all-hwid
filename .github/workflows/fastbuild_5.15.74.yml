@@ -303,6 +303,11 @@ jobs:
           else
             echo "已选择无内置KernelSU模式，跳过KernelSU配置..."
           fi
+          # fix_5.15.legacy: 5.15.0~122 老子版本 tools/bpf 构建修复 (自 Action-Build 移植, 09-26)
+          PSRC="$GITHUB_WORKSPACE/other_patch/fix_5.15.legacy.patch"
+          if [ -d "$GITHUB_WORKSPACE/kernel_workspace/common" ]; then
+            patch -d "$GITHUB_WORKSPACE/kernel_workspace/common" -p1 -F 3 --forward < "$PSRC" || true
+          fi
 
       - name: 应用 KernelSU & SUSFS 补丁
         if: inputs.susfs_enable
