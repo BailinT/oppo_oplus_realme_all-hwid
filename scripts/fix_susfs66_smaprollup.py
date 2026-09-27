@@ -18,7 +18,7 @@ if '#ifdef CONFIG_KSU_SUSFS_SUS_MAP' in window:
     if os.path.exists(rej):
         os.remove(rej); print('removed', rej)
     raise SystemExit
-m = re.search(r'(if \(vma->vm_end > last_vma_end\) \{\n)(\t+)(smap_gather_stats\(vma, &mss, last_vma_end\);\n\2last_vma_end = vma->vm_end;\n)(\})', window)
+m = re.search(r'(if \(vma->vm_end > last_vma_end\) \{\n)(\t+)(smap_gather_stats\(vma, &mss, last_vma_end\);\n\2last_vma_end = vma->vm_end;\n)(\t+\})', window)
 if not m:
     print('WARN: Case-4 inner pattern not found, .rej 保留待人工审查'); raise SystemExit
 T = m.group(2)
