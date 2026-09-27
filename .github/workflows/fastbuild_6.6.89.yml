@@ -631,6 +631,25 @@ jobs:
           sudo rm -rf /usr/local/lib/android &
           sudo rm -rf /opt/ghc &
           sudo rm -rf /opt/hostedtoolcache/CodeQL &
+          # BBRv3 背包 + unicode_bypass (自 Action-Build 移植, 09-27; 6.12 树自带 bbrv3 跳过)
+          KD=.; [ -d ./drivers ] || KD=./common
+          [ -f "$KD/Makefile" ] || KD="$GITHUB_WORKSPACE/kernel_workspace/common"
+          KMI="${ANDROID_VERSION}-${KERNEL_VERSION}"
+          cp "$GITHUB_WORKSPACE/other_patch/bbrv3_backport_${KMI}.patch" /tmp/bbrv3_kmi.patch 2>/dev/null || true
+          cp "$GITHUB_WORKSPACE/other_patch/unicode_bypass_fix_6.1-.patch" /tmp/uni_bypass.patch 2>/dev/null || true
+          cp "$GITHUB_WORKSPACE/other_patch/unicode_bypass_fix_6.1+.patch" /tmp/uni_bypass2.patch 2>/dev/null || true
+          UNI=uni_bypass.patch; case "$KERNEL_VERSION" in 5.*) : ;; *) UNI=uni_bypass2.patch ;; esac
+          if [ -s /tmp/bbrv3_kmi.patch ]; then
+            patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_kmi.patch || true
+            echo "CONFIG_TCP_CONG_BBR3=y" >> "$KD/arch/arm64/configs/gki_defconfig"
+          fi
+          if [ "$KMI" = "android12-5.10" ] && [ -s /tmp/bbrv3_sysctl_add.patch ] && ! grep -q "int proc_dou8vec_minmax(" "$KD/include/linux/sysctl.h"; then
+            wget -qO /tmp/bbrv3_sys1.patch "https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/$GITHUB_REF_NAME/other_patch/bbrv3_sysctl_add_proc_dou8vec_minmax.patch" || true
+            wget -qO /tmp/bbrv3_sys2.patch "https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/$GITHUB_REF_NAME/other_patch/bbrv3_sysctl_fix_dou8vec.patch" || true
+            patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_sys1.patch || true
+            patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_sys2.patch || true
+          fi
+          [ -s /tmp/$UNI ] && patch -d "$KD" -p1 -F 3 --forward < /tmp/$UNI || true
           make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="ccache clang" LD="ld.lld" HOSTLD=ld.lld O=out KCFLAGS+=-O2 KCFLAGS+=-Wno-error gki_defconfig &&
           # 补丁拒绝检查(.rej 残留=有 hunk 未打上, 防静默缺补丁)
           bash "$GITHUB_WORKSPACE/scripts/check_patch_rejects.sh"
