@@ -307,6 +307,7 @@ jobs:
             cp ./susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
             cd ./common
             patch -p1 --forward --fuzz=3 --ignore-whitespace < 50_add_susfs_in_gki-android15-6.6.patch || true
+          cp "$GITHUB_WORKSPACE/scripts/fix_susfs66_smaprollup.py" /tmp/fix_smaprollup.py && python3 /tmp/fix_smaprollup.py
             test -f ./fs/susfs.c && test -f ./include/linux/susfs.h || { echo "::error::SUSFS 核心文件缺失"; exit 1; }
             patch -p1 -N -F 3 --ignore-whitespace < 69_hide_stuff.patch || true
             cd ..
