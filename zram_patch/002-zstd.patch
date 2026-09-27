@@ -5,7 +5,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_ldm_geartab.h b/lib/zstd/compress/zstd_ldm_geartab.h
+diff --git diff --git a/lib/zstd/compress/zstd_ldm_geartab.h b/lib/zstd/compress/zstd_ldm_geartab.h
 --- a/lib/zstd/compress/zstd_ldm_geartab.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_ldm_geartab.h	(date 1740124241493)
 @@ -1,5 +1,6 @@
@@ -33,7 +33,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_cwksp.h b/lib/zstd/compress/zstd_cwksp.h
+diff --git diff --git a/lib/zstd/compress/zstd_cwksp.h b/lib/zstd/compress/zstd_cwksp.h
 --- a/lib/zstd/compress/zstd_cwksp.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_cwksp.h	(date 1740124241440)
 @@ -1,5 +1,6 @@
@@ -603,7 +603,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_compress_literals.c b/lib/zstd/compress/zstd_compress_literals.c
+diff --git diff --git a/lib/zstd/compress/zstd_compress_literals.c b/lib/zstd/compress/zstd_compress_literals.c
 --- a/lib/zstd/compress/zstd_compress_literals.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_compress_literals.c	(date 1740124241410)
 @@ -1,5 +1,6 @@
@@ -849,7 +849,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_opt.c b/lib/zstd/compress/zstd_opt.c
+diff --git diff --git a/lib/zstd/compress/zstd_opt.c b/lib/zstd/compress/zstd_opt.c
 --- a/lib/zstd/compress/zstd_opt.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_opt.c	(date 1740124333090)
 @@ -1,5 +1,6 @@
@@ -2331,7 +2331,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_ldm.h b/lib/zstd/compress/zstd_ldm.h
+diff --git diff --git a/lib/zstd/compress/zstd_ldm.h b/lib/zstd/compress/zstd_ldm.h
 --- a/lib/zstd/compress/zstd_ldm.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_ldm.h	(date 1740124241487)
 @@ -1,5 +1,6 @@
@@ -2400,7 +2400,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_compress_superblock.c b/lib/zstd/compress/zstd_compress_superblock.c
+diff --git diff --git a/lib/zstd/compress/zstd_compress_superblock.c b/lib/zstd/compress/zstd_compress_superblock.c
 --- a/lib/zstd/compress/zstd_compress_superblock.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_compress_superblock.c	(date 1740124241431)
 @@ -1,5 +1,6 @@
@@ -3317,7 +3317,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_double_fast.h b/lib/zstd/compress/zstd_double_fast.h
+diff --git diff --git a/lib/zstd/compress/zstd_double_fast.h b/lib/zstd/compress/zstd_double_fast.h
 --- a/lib/zstd/compress/zstd_double_fast.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_double_fast.h	(date 1740124241451)
 @@ -1,5 +1,6 @@
@@ -3373,7 +3373,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/hist.h b/lib/zstd/compress/hist.h
+diff --git diff --git a/lib/zstd/compress/hist.h b/lib/zstd/compress/hist.h
 --- a/lib/zstd/compress/hist.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/hist.h	(date 1740124241365)
 @@ -1,7 +1,8 @@
@@ -3402,7 +3402,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_lazy.h b/lib/zstd/compress/zstd_lazy.h
+diff --git diff --git a/lib/zstd/compress/zstd_lazy.h b/lib/zstd/compress/zstd_lazy.h
 --- a/lib/zstd/compress/zstd_lazy.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_lazy.h	(date 1740124241473)
 @@ -1,5 +1,6 @@
@@ -3631,7 +3631,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/decompress/zstd_decompress_block.c b/lib/zstd/decompress/zstd_decompress_block.c
+diff --git diff --git a/lib/zstd/decompress/zstd_decompress_block.c b/lib/zstd/decompress/zstd_decompress_block.c
 --- a/lib/zstd/decompress/zstd_decompress_block.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/decompress/zstd_decompress_block.c	(date 1740124333279)
 @@ -1,5 +1,6 @@
@@ -6146,7 +6146,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/fse_compress.c b/lib/zstd/compress/fse_compress.c
+diff --git diff --git a/lib/zstd/compress/fse_compress.c b/lib/zstd/compress/fse_compress.c
 --- a/lib/zstd/compress/fse_compress.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/fse_compress.c	(date 1740124241354)
 @@ -1,6 +1,7 @@
@@ -6448,7 +6448,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_fast.c b/lib/zstd/compress/zstd_fast.c
+diff --git diff --git a/lib/zstd/compress/zstd_fast.c b/lib/zstd/compress/zstd_fast.c
 --- a/lib/zstd/compress/zstd_fast.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_fast.c	(date 1740124241456)
 @@ -1,5 +1,6 @@
@@ -7687,7 +7687,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_compress_literals.h b/lib/zstd/compress/zstd_compress_literals.h
+diff --git diff --git a/lib/zstd/compress/zstd_compress_literals.h b/lib/zstd/compress/zstd_compress_literals.h
 --- a/lib/zstd/compress/zstd_compress_literals.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_compress_literals.h	(date 1740124241415)
 @@ -1,5 +1,6 @@
@@ -7733,7 +7733,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_opt.h b/lib/zstd/compress/zstd_opt.h
+diff --git diff --git a/lib/zstd/compress/zstd_opt.h b/lib/zstd/compress/zstd_opt.h
 --- a/lib/zstd/compress/zstd_opt.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_opt.h	(date 1740124333228)
 @@ -1,5 +1,6 @@
@@ -7827,7 +7827,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_fast.h b/lib/zstd/compress/zstd_fast.h
+diff --git diff --git a/lib/zstd/compress/zstd_fast.h b/lib/zstd/compress/zstd_fast.h
 --- a/lib/zstd/compress/zstd_fast.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_fast.h	(date 1740124241461)
 @@ -1,5 +1,6 @@
@@ -7871,7 +7871,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_compress_superblock.h b/lib/zstd/compress/zstd_compress_superblock.h
+diff --git diff --git a/lib/zstd/compress/zstd_compress_superblock.h b/lib/zstd/compress/zstd_compress_superblock.h
 --- a/lib/zstd/compress/zstd_compress_superblock.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_compress_superblock.h	(date 1740124241435)
 @@ -1,5 +1,6 @@
@@ -7887,7 +7887,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/decompress/zstd_ddict.h b/lib/zstd/decompress/zstd_ddict.h
+diff --git diff --git a/lib/zstd/decompress/zstd_ddict.h b/lib/zstd/decompress/zstd_ddict.h
 --- a/lib/zstd/decompress/zstd_ddict.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/decompress/zstd_ddict.h	(date 1740124333260)
 @@ -1,5 +1,6 @@
@@ -7903,7 +7903,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/decompress/zstd_decompress_internal.h b/lib/zstd/decompress/zstd_decompress_internal.h
+diff --git diff --git a/lib/zstd/decompress/zstd_decompress_internal.h b/lib/zstd/decompress/zstd_decompress_internal.h
 --- a/lib/zstd/decompress/zstd_decompress_internal.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/decompress/zstd_decompress_internal.h	(date 1740124333288)
 @@ -1,5 +1,6 @@
@@ -8040,7 +8040,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/decompress/zstd_decompress_block.h b/lib/zstd/decompress/zstd_decompress_block.h
+diff --git diff --git a/lib/zstd/decompress/zstd_decompress_block.h b/lib/zstd/decompress/zstd_decompress_block.h
 --- a/lib/zstd/decompress/zstd_decompress_block.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/decompress/zstd_decompress_block.h	(date 1740124333283)
 @@ -1,5 +1,6 @@
@@ -8094,7 +8094,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/decompress/huf_decompress.c b/lib/zstd/decompress/huf_decompress.c
+diff --git diff --git a/lib/zstd/decompress/huf_decompress.c b/lib/zstd/decompress/huf_decompress.c
 --- a/lib/zstd/decompress/huf_decompress.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/decompress/huf_decompress.c	(date 1740124333250)
 @@ -1,7 +1,8 @@
@@ -10103,7 +10103,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/decompress/zstd_ddict.c b/lib/zstd/decompress/zstd_ddict.c
+diff --git diff --git a/lib/zstd/decompress/zstd_ddict.c b/lib/zstd/decompress/zstd_ddict.c
 --- a/lib/zstd/decompress/zstd_ddict.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/decompress/zstd_ddict.c	(date 1740124333255)
 @@ -1,5 +1,6 @@
@@ -10149,7 +10149,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/decompress/zstd_decompress.c b/lib/zstd/decompress/zstd_decompress.c
+diff --git diff --git a/lib/zstd/decompress/zstd_decompress.c b/lib/zstd/decompress/zstd_decompress.c
 --- a/lib/zstd/decompress/zstd_decompress.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/decompress/zstd_decompress.c	(date 1740124333270)
 @@ -1,5 +1,6 @@
@@ -11117,7 +11117,7 @@ diff --git a/lib/zstd/decompress/zstd_decompress.c b/lib/zstd/decompress/zstd_de
  }
 Index: lib/zstd/common/allocations.h
 ===================================================================
-diff --git a/lib/zstd/common/allocations.h b/lib/zstd/common/allocations.h
+diff --git diff --git a/lib/zstd/common/allocations.h b/lib/zstd/common/allocations.h
 new file mode 100644
 --- /dev/null	(date 1740124241238)
 +++ b/lib/zstd/common/allocations.h	(date 1740124241238)
@@ -11180,7 +11180,7 @@ new file mode 100644
 +#endif /* ZSTD_ALLOCATIONS_H */
 Index: lib/zstd/common/bits.h
 ===================================================================
-diff --git a/lib/zstd/common/bits.h b/lib/zstd/common/bits.h
+diff --git diff --git a/lib/zstd/common/bits.h b/lib/zstd/common/bits.h
 new file mode 100644
 --- /dev/null	(date 1740124241245)
 +++ b/lib/zstd/common/bits.h	(date 1740124241245)
@@ -11337,132 +11337,7 @@ new file mode 100644
 +#endif /* ZSTD_BITS_H */
 Index: lib/zstd/common/portability_macros.h
 ===================================================================
-diff --git a/lib/zstd/common/portability_macros.h b/lib/zstd/common/portability_macros.h
-new file mode 100644
---- /dev/null	(date 1740124241324)
-+++ b/lib/zstd/common/portability_macros.h	(date 1740124241324)
-@@ -0,0 +1,118 @@
-+/* SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause */
-+/*
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ * All rights reserved.
-+ *
-+ * This source code is licensed under both the BSD-style license (found in the
-+ * LICENSE file in the root directory of this source tree) and the GPLv2 (found
-+ * in the COPYING file in the root directory of this source tree).
-+ * You may select, at your option, one of the above-listed licenses.
-+ */
-+
-+#ifndef ZSTD_PORTABILITY_MACROS_H
-+#define ZSTD_PORTABILITY_MACROS_H
-+
-+/*
-+ * This header file contains macro definitions to support portability.
-+ * This header is shared between C and ASM code, so it MUST only
-+ * contain macro definitions. It MUST not contain any C code.
-+ *
-+ * This header ONLY defines macros to detect platforms/feature support.
-+ *
-+ */
-+
-+
-+/* compat. with non-clang compilers */
-+#ifndef __has_attribute
-+  #define __has_attribute(x) 0
-+#endif
-+
-+/* compat. with non-clang compilers */
-+#ifndef __has_builtin
-+#  define __has_builtin(x) 0
-+#endif
-+
-+/* compat. with non-clang compilers */
-+#ifndef __has_feature
-+#  define __has_feature(x) 0
-+#endif
-+
-+/* detects whether we are being compiled under msan */
-+
-+/* detects whether we are being compiled under asan */
-+
-+/* detects whether we are being compiled under dfsan */
-+
-+/* Mark the internal assembly functions as hidden  */
-+#ifdef __ELF__
-+# define ZSTD_HIDE_ASM_FUNCTION(func) .hidden func
-+#elif defined(__APPLE__)
-+# define ZSTD_HIDE_ASM_FUNCTION(func) .private_extern func
-+#else
-+# define ZSTD_HIDE_ASM_FUNCTION(func)
-+#endif
-+
-+/* Compile time determination of BMI2 support */
-+
-+
-+/* Enable runtime BMI2 dispatch based on the CPU.
-+ * Enabled for clang & gcc >=4.8 on x86 when BMI2 isn't enabled by default.
-+ */
-+#ifndef DYNAMIC_BMI2
-+#  if ((defined(__clang__) && __has_attribute(__target__)) \
-+      || (defined(__GNUC__) \
-+          && (__GNUC__ >= 5 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)))) \
-+      && (defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64)) \
-+      && !defined(__BMI2__)
-+#    define DYNAMIC_BMI2 1
-+#  else
-+#    define DYNAMIC_BMI2 0
-+#  endif
-+#endif
-+
-+/*
-+ * Only enable assembly for GNU C compatible compilers,
-+ * because other platforms may not support GAS assembly syntax.
-+ *
-+ * Only enable assembly for Linux / MacOS / Win32, other platforms may
-+ * work, but they haven't been tested. This could likely be
-+ * extended to BSD systems.
-+ *
-+ * Disable assembly when MSAN is enabled, because MSAN requires
-+ * 100% of code to be instrumented to work.
-+ */
-+#define ZSTD_ASM_SUPPORTED 1
-+
-+/*
-+ * Determines whether we should enable assembly for x86-64
-+ * with BMI2.
-+ *
-+ * Enable if all of the following conditions hold:
-+ * - ASM hasn't been explicitly disabled by defining ZSTD_DISABLE_ASM
-+ * - Assembly is supported
-+ * - We are compiling for x86-64 and either:
-+ *   - DYNAMIC_BMI2 is enabled
-+ *   - BMI2 is supported at compile time
-+ */
-+#define ZSTD_ENABLE_ASM_X86_64_BMI2 0
-+
-+/*
-+ * For x86 ELF targets, add .note.gnu.property section for Intel CET in
-+ * assembly sources when CET is enabled.
-+ *
-+ * Additionally, any function that may be called indirectly must begin
-+ * with ZSTD_CET_ENDBRANCH.
-+ */
-+#if defined(__ELF__) && (defined(__x86_64__) || defined(__i386__)) \
-+    && defined(__has_include)
-+# if __has_include(<cet.h>)
-+#  include <cet.h>
-+#  define ZSTD_CET_ENDBRANCH _CET_ENDBR
-+# endif
-+#endif
-+
-+#ifndef ZSTD_CET_ENDBRANCH
-+# define ZSTD_CET_ENDBRANCH
-+#endif
-+
-+#endif /* ZSTD_PORTABILITY_MACROS_H */
-Index: lib/zstd/compress/clevels.h
-===================================================================
-diff --git a/lib/zstd/compress/clevels.h b/lib/zstd/compress/clevels.h
+diff --git diff --git a/lib/zstd/compress/clevels.h b/lib/zstd/compress/clevels.h
 new file mode 100644
 --- /dev/null	(date 1740124241346)
 +++ b/lib/zstd/compress/clevels.h	(date 1740124241346)
@@ -11602,7 +11477,7 @@ new file mode 100644
 +#endif  /* ZSTD_CLEVELS_H */
 Index: lib/zstd/compress/zstd_preSplit.c
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_preSplit.c b/lib/zstd/compress/zstd_preSplit.c
+diff --git diff --git a/lib/zstd/compress/zstd_preSplit.c b/lib/zstd/compress/zstd_preSplit.c
 new file mode 100644
 --- /dev/null	(date 1740124333234)
 +++ b/lib/zstd/compress/zstd_preSplit.c	(date 1740124333234)
@@ -11851,7 +11726,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/include/linux/zstd.h b/include/linux/zstd.h
+diff --git diff --git a/include/linux/zstd.h b/include/linux/zstd.h
 --- a/include/linux/zstd.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/include/linux/zstd.h	(date 1740124100073)
 @@ -1,6 +1,6 @@
@@ -11991,7 +11866,7 @@ diff --git a/include/linux/zstd.h b/include/linux/zstd.h
  #endif  /* LINUX_ZSTD_H */
 Index: lib/zstd/compress/zstd_preSplit.h
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_preSplit.h b/lib/zstd/compress/zstd_preSplit.h
+diff --git diff --git a/lib/zstd/compress/zstd_preSplit.h b/lib/zstd/compress/zstd_preSplit.h
 new file mode 100644
 --- /dev/null	(date 1740124333240)
 +++ b/lib/zstd/compress/zstd_preSplit.h	(date 1740124333240)
@@ -12032,7 +11907,7 @@ new file mode 100644
 +#endif /* ZSTD_PRESPLIT_H */
 Index: lib/zstd/zstd_common_module.c
 ===================================================================
-diff --git a/lib/zstd/zstd_common_module.c b/lib/zstd/zstd_common_module.c
+diff --git diff --git a/lib/zstd/zstd_common_module.c b/lib/zstd/zstd_common_module.c
 new file mode 100644
 --- /dev/null	(date 1740124333301)
 +++ b/lib/zstd/zstd_common_module.c	(date 1740124333301)
@@ -12071,7 +11946,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/MAINTAINERS b/MAINTAINERS
+diff --git diff --git a/MAINTAINERS b/MAINTAINERS
 --- a/MAINTAINERS	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/MAINTAINERS	(date 1740124333344)
 @@ -22857,7 +22857,7 @@
@@ -12088,7 +11963,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/include/linux/zstd_lib.h b/include/linux/zstd_lib.h
+diff --git diff --git a/include/linux/zstd_lib.h b/include/linux/zstd_lib.h
 --- a/include/linux/zstd_lib.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/include/linux/zstd_lib.h	(date 1740124241097)
 @@ -1,5 +1,6 @@
@@ -14563,7 +14438,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/crypto/zstd.c b/crypto/zstd.c
+diff --git diff --git a/crypto/zstd.c b/crypto/zstd.c
 --- a/crypto/zstd.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/crypto/zstd.c	(date 1740124100057)
 @@ -15,7 +15,8 @@
@@ -14594,7 +14469,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/include/linux/zstd_errors.h b/include/linux/zstd_errors.h
+diff --git diff --git a/include/linux/zstd_errors.h b/include/linux/zstd_errors.h
 --- a/include/linux/zstd_errors.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/include/linux/zstd_errors.h	(date 1740124164582)
 @@ -1,5 +1,6 @@
@@ -14677,7 +14552,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/zstd_compress_module.c b/lib/zstd/zstd_compress_module.c
+diff --git diff --git a/lib/zstd/zstd_compress_module.c b/lib/zstd/zstd_compress_module.c
 --- a/lib/zstd/zstd_compress_module.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/zstd_compress_module.c	(date 1740124333305)
 @@ -1,6 +1,6 @@
@@ -14805,7 +14680,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/zstd_decompress_module.c b/lib/zstd/zstd_decompress_module.c
+diff --git diff --git a/lib/zstd/zstd_decompress_module.c b/lib/zstd/zstd_decompress_module.c
 --- a/lib/zstd/zstd_decompress_module.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/zstd_decompress_module.c	(date 1740124333309)
 @@ -1,6 +1,6 @@
@@ -14830,7 +14705,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/Makefile b/lib/zstd/Makefile
+diff --git diff --git a/lib/zstd/Makefile b/lib/zstd/Makefile
 --- a/lib/zstd/Makefile	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/Makefile	(date 1740124333297)
 @@ -1,6 +1,6 @@
@@ -14862,7 +14737,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/decompress_sources.h b/lib/zstd/decompress_sources.h
+diff --git diff --git a/lib/zstd/decompress_sources.h b/lib/zstd/decompress_sources.h
 --- a/lib/zstd/decompress_sources.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/decompress_sources.h	(date 1740124333294)
 @@ -1,6 +1,6 @@
@@ -14891,7 +14766,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/debug.h b/lib/zstd/common/debug.h
+diff --git diff --git a/lib/zstd/common/debug.h b/lib/zstd/common/debug.h
 --- a/lib/zstd/common/debug.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/debug.h	(date 1740124241273)
 @@ -1,7 +1,8 @@
@@ -14958,7 +14833,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/bitstream.h b/lib/zstd/common/bitstream.h
+diff --git diff --git a/lib/zstd/common/bitstream.h b/lib/zstd/common/bitstream.h
 --- a/lib/zstd/common/bitstream.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/bitstream.h	(date 1740124241253)
 @@ -1,7 +1,8 @@
@@ -15342,7 +15217,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/cpu.h b/lib/zstd/common/cpu.h
+diff --git diff --git a/lib/zstd/common/cpu.h b/lib/zstd/common/cpu.h
 --- a/lib/zstd/common/cpu.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/cpu.h	(date 1740124241265)
 @@ -1,5 +1,6 @@
@@ -15358,7 +15233,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/zstd_common.c b/lib/zstd/common/zstd_common.c
+diff --git diff --git a/lib/zstd/common/zstd_common.c b/lib/zstd/common/zstd_common.c
 --- a/lib/zstd/common/zstd_common.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/zstd_common.c	(date 1740124241329)
 @@ -1,5 +1,6 @@
@@ -15443,7 +15318,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/compiler.h b/lib/zstd/common/compiler.h
+diff --git diff --git a/lib/zstd/common/compiler.h b/lib/zstd/common/compiler.h
 --- a/lib/zstd/common/compiler.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/compiler.h	(date 1740124241260)
 @@ -1,5 +1,6 @@
@@ -15741,7 +15616,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/huf.h b/lib/zstd/common/huf.h
+diff --git diff --git a/lib/zstd/common/huf.h b/lib/zstd/common/huf.h
 --- a/lib/zstd/common/huf.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/huf.h	(date 1740124241310)
 @@ -1,7 +1,8 @@
@@ -16144,7 +16019,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/mem.h b/lib/zstd/common/mem.h
+diff --git diff --git a/lib/zstd/common/mem.h b/lib/zstd/common/mem.h
 --- a/lib/zstd/common/mem.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/mem.h	(date 1740124241317)
 @@ -1,6 +1,6 @@
@@ -16176,7 +16051,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/fse.h b/lib/zstd/common/fse.h
+diff --git diff --git a/lib/zstd/common/fse.h b/lib/zstd/common/fse.h
 --- a/lib/zstd/common/fse.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/fse.h	(date 1740124241297)
 @@ -1,7 +1,8 @@
@@ -16397,7 +16272,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/zstd_deps.h b/lib/zstd/common/zstd_deps.h
+diff --git diff --git a/lib/zstd/common/zstd_deps.h b/lib/zstd/common/zstd_deps.h
 --- a/lib/zstd/common/zstd_deps.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/zstd_deps.h	(date 1740124241333)
 @@ -1,6 +1,6 @@
@@ -16426,7 +16301,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_double_fast.c b/lib/zstd/compress/zstd_double_fast.c
+diff --git diff --git a/lib/zstd/compress/zstd_double_fast.c b/lib/zstd/compress/zstd_double_fast.c
 --- a/lib/zstd/compress/zstd_double_fast.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_double_fast.c	(date 1740124241447)
 @@ -1,5 +1,6 @@
@@ -17383,7 +17258,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/error_private.c b/lib/zstd/common/error_private.c
+diff --git diff --git a/lib/zstd/common/error_private.c b/lib/zstd/common/error_private.c
 --- a/lib/zstd/common/error_private.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/error_private.c	(date 1740124241284)
 @@ -1,5 +1,6 @@
@@ -17436,7 +17311,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/error_private.h b/lib/zstd/common/error_private.h
+diff --git diff --git a/lib/zstd/common/error_private.h b/lib/zstd/common/error_private.h
 --- a/lib/zstd/common/error_private.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/error_private.h	(date 1740124241289)
 @@ -1,5 +1,6 @@
@@ -17572,7 +17447,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/entropy_common.c b/lib/zstd/common/entropy_common.c
+diff --git diff --git a/lib/zstd/common/entropy_common.c b/lib/zstd/common/entropy_common.c
 --- a/lib/zstd/common/entropy_common.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/entropy_common.c	(date 1740124241277)
 @@ -1,6 +1,7 @@
@@ -17737,7 +17612,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/fse_decompress.c b/lib/zstd/common/fse_decompress.c
+diff --git diff --git a/lib/zstd/common/fse_decompress.c b/lib/zstd/common/fse_decompress.c
 --- a/lib/zstd/common/fse_decompress.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/fse_decompress.c	(date 1740124241304)
 @@ -1,6 +1,7 @@
@@ -17993,7 +17868,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/debug.c b/lib/zstd/common/debug.c
+diff --git diff --git a/lib/zstd/common/debug.c b/lib/zstd/common/debug.c
 --- a/lib/zstd/common/debug.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/debug.c	(date 1740124241269)
 @@ -1,7 +1,8 @@
@@ -18022,7 +17897,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/common/zstd_internal.h b/lib/zstd/common/zstd_internal.h
+diff --git diff --git a/lib/zstd/common/zstd_internal.h b/lib/zstd/common/zstd_internal.h
 --- a/lib/zstd/common/zstd_internal.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/common/zstd_internal.h	(date 1740124241339)
 @@ -1,5 +1,6 @@
@@ -18392,7 +18267,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_ldm.c b/lib/zstd/compress/zstd_ldm.c
+diff --git diff --git a/lib/zstd/compress/zstd_ldm.c b/lib/zstd/compress/zstd_ldm.c
 --- a/lib/zstd/compress/zstd_ldm.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_ldm.c	(date 1740124241481)
 @@ -1,5 +1,6 @@
@@ -18805,7 +18680,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_compress_sequences.c b/lib/zstd/compress/zstd_compress_sequences.c
+diff --git diff --git a/lib/zstd/compress/zstd_compress_sequences.c b/lib/zstd/compress/zstd_compress_sequences.c
 --- a/lib/zstd/compress/zstd_compress_sequences.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_compress_sequences.c	(date 1740124241420)
 @@ -1,5 +1,6 @@
@@ -18988,7 +18863,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_compress_sequences.h b/lib/zstd/compress/zstd_compress_sequences.h
+diff --git diff --git a/lib/zstd/compress/zstd_compress_sequences.h b/lib/zstd/compress/zstd_compress_sequences.h
 --- a/lib/zstd/compress/zstd_compress_sequences.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_compress_sequences.h	(date 1740124241425)
 @@ -1,5 +1,6 @@
@@ -19046,7 +18921,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_compress.c b/lib/zstd/compress/zstd_compress.c
+diff --git diff --git a/lib/zstd/compress/zstd_compress.c b/lib/zstd/compress/zstd_compress.c
 --- a/lib/zstd/compress/zstd_compress.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_compress.c	(date 1740124241392)
 @@ -1,5 +1,6 @@
@@ -25587,7 +25462,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/hist.c b/lib/zstd/compress/hist.c
+diff --git diff --git a/lib/zstd/compress/hist.c b/lib/zstd/compress/hist.c
 --- a/lib/zstd/compress/hist.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/hist.c	(date 1740124241360)
 @@ -1,7 +1,8 @@
@@ -25622,7 +25497,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_compress_internal.h b/lib/zstd/compress/zstd_compress_internal.h
+diff --git diff --git a/lib/zstd/compress/zstd_compress_internal.h b/lib/zstd/compress/zstd_compress_internal.h
 --- a/lib/zstd/compress/zstd_compress_internal.h	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_compress_internal.h	(date 1740124241403)
 @@ -1,5 +1,6 @@
@@ -26980,7 +26855,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/huf_compress.c b/lib/zstd/compress/huf_compress.c
+diff --git diff --git a/lib/zstd/compress/huf_compress.c b/lib/zstd/compress/huf_compress.c
 --- a/lib/zstd/compress/huf_compress.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/huf_compress.c	(date 1740124241371)
 @@ -1,6 +1,7 @@
@@ -28466,7 +28341,7 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/lib/zstd/compress/zstd_lazy.c b/lib/zstd/compress/zstd_lazy.c
+diff --git diff --git a/lib/zstd/compress/zstd_lazy.c b/lib/zstd/compress/zstd_lazy.c
 --- a/lib/zstd/compress/zstd_lazy.c	(revision 0f030fd569788084912f092fc08e278d5c2a1b78)
 +++ b/lib/zstd/compress/zstd_lazy.c	(date 1740124241468)
 @@ -1,5 +1,6 @@
