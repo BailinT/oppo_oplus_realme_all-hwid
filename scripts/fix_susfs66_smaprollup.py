@@ -23,14 +23,14 @@ if not m:
     print('WARN: Case-4 inner pattern not found, .rej 保留待人工审查'); raise SystemExit
 T = m.group(2)
 repl = (m.group(1)
-    + '#ifdef CONFIG_KSU_SUSFS_SUS_MAP' + NL
-    + T + 'if (!vma->vm_file || !(SUSFS_IS_INODE_SUS_MAP(file_inode(vma->vm_file)))) {' + NL
-    + T + chr(9) + 'smap_gather_stats(vma, &mss, last_vma_end);' + NL
-    + T + chr(9) + 'last_vma_end = vma->vm_end;' + NL
-    + T + '}' + NL
-    + T + '#else' + NL
+    + '#ifdef CONFIG_KSU_SUSFS_SUS_MAP' + chr(10)
+    + T + 'if (!vma->vm_file || !(SUSFS_IS_INODE_SUS_MAP(file_inode(vma->vm_file)))) {' + chr(10)
+    + T + chr(9) + 'smap_gather_stats(vma, &mss, last_vma_end);' + chr(10)
+    + T + chr(9) + 'last_vma_end = vma->vm_end;' + chr(10)
+    + T + '}' + chr(10)
+    + T + '#else' + chr(10)
     + m.group(3)
-    + T + '#endif /* CONFIG_KSU_SUSFS_SUS_MAP */' + NL
+    + T + '#endif /* CONFIG_KSU_SUSFS_SUS_MAP */' + chr(10)
     + m.group(4))
 src = src[:i] + window.replace(m.group(0), repl, 1) + src[i+900:]
 open(p, 'w', encoding='utf-8', newline='').write(src)
