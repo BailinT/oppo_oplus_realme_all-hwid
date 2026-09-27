@@ -336,6 +336,7 @@ jobs:
           git apply -p1 < 001-lz4.patch || true
           git apply -p1 < 001-lz4-clearMake.patch || true
           patch -p1 -F 3 < 002-zstd.patch || true
+          rm -f $GITHUB_WORKSPACE/kernel_workspace/common/lib/zstd/common/portability_macros.h.rej # 118 树 zstd 较新, 002-zstd 的 Apple 装饰 hunk 不适用(良性)
 
       - name: 应用 lz4kd 补丁
         if: inputs.lz4kd_enable
