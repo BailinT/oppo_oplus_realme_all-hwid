@@ -12,7 +12,7 @@ i = src.find('/* Case 4 above */')
 if i < 0:
     print('WARN: Case-4 marker not found, .rej 保留待人工审查'); raise SystemExit
 window = src[i:i+1200]
-if re.search(r'Case 4 above \*/\n(\t+)if \(vma->vm_end > last_vma_end\) \{\n\t+#ifdef CONFIG_KSU_SUSFS_SUS_MAP', window):
+if re.search(r'Case 4 above \*/\n(\t+)if \(vma->vm_end > last_vma_end\) \{\n#ifdef CONFIG_KSU_SUSFS_SUS_MAP', window):
     print('Case-4 已包裹, skip')
     rej = root + 'fs/proc/task_mmu.c.rej'
     if os.path.exists(rej):
