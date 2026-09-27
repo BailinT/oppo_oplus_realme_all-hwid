@@ -615,11 +615,11 @@ jobs:
             patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_kmi.patch || true
             echo "CONFIG_TCP_CONG_BBR3=y" >> "$KD/arch/arm64/configs/gki_defconfig"
           fi
-          if [ "$KMI" = "android12-5.10" ] && [ -s /tmp/bbrv3_sysctl_add.patch ] && ! grep -q "int proc_dou8vec_minmax(" "$KD/include/linux/sysctl.h"; then
+          if [ "$KMI" = "android12-5.10" ] && ! grep -q "int proc_dou8vec_minmax(" "$KD/include/linux/sysctl.h"; then
             wget -qO /tmp/bbrv3_sys1.patch "https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/$GITHUB_REF_NAME/other_patch/bbrv3_sysctl_add_proc_dou8vec_minmax.patch" || true
             wget -qO /tmp/bbrv3_sys2.patch "https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/$GITHUB_REF_NAME/other_patch/bbrv3_sysctl_fix_dou8vec.patch" || true
-            patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_sys1.patch || true
-            patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_sys2.patch || true
+            [ -s /tmp/bbrv3_sys1.patch ] && patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_sys1.patch || true
+            [ -s /tmp/bbrv3_sys2.patch ] && patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_sys2.patch || true
           fi
           [ -s /tmp/$UNI ] && patch -d "$KD" -p1 -F 3 --forward < /tmp/$UNI || true
           DEFCONFIG_OK=0
