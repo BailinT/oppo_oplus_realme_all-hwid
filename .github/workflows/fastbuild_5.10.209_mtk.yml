@@ -654,6 +654,8 @@ jobs:
           # 通用清障: 原厂配置启用的内建驱动在公开树缺源码目录(死链) -> 建 stub 让 make 跳过 (自 all 仓 v7 配方同步)
           cp "$GITHUB_WORKSPACE/scripts/stub_missing_drivers.py" /tmp/stub_missing_drivers.py
           python3 /tmp/stub_missing_drivers.py
+          # 补丁拒绝检查(.rej 残留=有 hunk 未打上, 防静默缺补丁)
+          bash "$GITHUB_WORKSPACE/scripts/check_patch_rejects.sh"
           make -j$(nproc --all) LLVM=1 LLVM_IAS=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="$(pwd)/cc-wrapper" LD="$(pwd)/ld-wrapper" HOSTLD=ld.lld O=out KCFLAGS+=-O2 KCFLAGS+=-Wno-error KCFLAGS+=-Wno-error=strict-prototypes Image
           
           # 编译后时间劫持二次校验

@@ -640,6 +640,8 @@ jobs:
             make -j$(nproc --all) LLVM=1 LLVM_IAS=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="ccache clang" LD="ld.lld" HOSTLD=ld.lld O=out KCFLAGS+=-O2 KCFLAGS+=-Wno-error olddefconfig
             if grep -q "^CONFIG_LTO_CLANG_THIN=y" out/.config; then echo "已切换为 ThinLTO"; else echo "警告: ThinLTO 未生效"; fi
           fi
+          # 补丁拒绝检查(.rej 残留=有 hunk 未打上, 防静默缺补丁)
+          bash "$GITHUB_WORKSPACE/scripts/check_patch_rejects.sh"
           make -j$(nproc --all) LLVM=1 LLVM_IAS=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="$(pwd)/cc-wrapper" LD="$(pwd)/ld-wrapper" HOSTLD=ld.lld O=out KCFLAGS+=-O2 KCFLAGS+=-Wno-error Image
           
           # 编译后时间劫持二次校验
