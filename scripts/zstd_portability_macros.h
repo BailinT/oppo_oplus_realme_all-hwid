@@ -1,26 +1,3 @@
-/* SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause */
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- * This header file contains macro definitions to support portability.
-          && (__GNUC__ >= 11))) \
-/*
- * For x86 ELF targets, add .note.gnu.property section for Intel CET in
- * assembly sources when CET is enabled.
- *
- * Additionally, any function that may be called indirectly must begin
- * with ZSTD_CET_ENDBRANCH.
- */
-#if defined(__ELF__) && (defined(__x86_64__) || defined(__i386__)) \
-    && defined(__has_include)
-# if __has_include(<cet.h>)
-#  include <cet.h>
-#  define ZSTD_CET_ENDBRANCH _CET_ENDBR
-# endif
-#endif
-
-#ifndef ZSTD_CET_ENDBRANCH
-# define ZSTD_CET_ENDBRANCH
-#endif
-
 /*
  * Copyright (c) Facebook, Inc.
  * All rights reserved.
@@ -68,13 +45,9 @@
 /* Mark the internal assembly functions as hidden  */
 #ifdef __ELF__
 # define ZSTD_HIDE_ASM_FUNCTION(func) .hidden func
-#elif defined(__APPLE__)
-# define ZSTD_HIDE_ASM_FUNCTION(func) .private_extern func
 #else
 # define ZSTD_HIDE_ASM_FUNCTION(func)
 #endif
-
-/* Compile time determination of BMI2 support */
 
 /* Enable runtime BMI2 dispatch based on the CPU.
  * Enabled for clang & gcc >=4.8 on x86 when BMI2 isn't enabled by default.
@@ -83,7 +56,7 @@
   #if ((defined(__clang__) && __has_attribute(__target__)) \
       || (defined(__GNUC__) \
           && (__GNUC__ >= 11))) \
-      && (defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64)) \
+      && (defined(__x86_64__) || defined(_M_X64)) \
       && !defined(__BMI2__)
   #  define DYNAMIC_BMI2 1
   #else
