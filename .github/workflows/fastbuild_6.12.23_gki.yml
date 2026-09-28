@@ -326,6 +326,7 @@ jobs:
           cd ./common
           patch -p1 -F 3 --forward < 001-lz4.patch || true
           patch -p1 -F 3 --forward < 002-zstd.patch || true
+          [ -f "$GITHUB_WORKSPACE/kernel_workspace/common/lib/zstd/common/portability_macros.h" ] || cp "$GITHUB_WORKSPACE/scripts/zstd_portability_macros.h" "$GITHUB_WORKSPACE/kernel_workspace/common/lib/zstd/common/portability_macros.h"
           rm -f $GITHUB_WORKSPACE/kernel_workspace/common/fs/f2fs/*.rej # f2fs-compress 已在预修树, GNU patch 对已应用跳过 hunk 仍存 spurious .rej
 
       - name: 应用 lz4kd 补丁

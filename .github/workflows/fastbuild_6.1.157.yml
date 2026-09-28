@@ -344,6 +344,7 @@ jobs:
           cd ./common
           git apply -p1 < 001-lz4.patch || true
           patch -p1 -F 3 < 002-zstd.patch || true
+          [ -f "$GITHUB_WORKSPACE/kernel_workspace/common/lib/zstd/common/portability_macros.h" ] || cp "$GITHUB_WORKSPACE/scripts/zstd_portability_macros.h" "$GITHUB_WORKSPACE/kernel_workspace/common/lib/zstd/common/portability_macros.h"
 
       - name: 应用 lz4kd 补丁
         if: inputs.lz4kd_enable
