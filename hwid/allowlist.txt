@@ -29,3 +29,5 @@ ypaun7pfovbmvcp7
 412a3eb6
 # OnePlus Ace 5 Ultra (PLC110, MT6991, androidboot.chipid, 2026-09-26)
 z9eiyhw8wg65vo79
+# OnePlus Ace 5 Ultra #2 (PLC110, MT6991, androidboot.chipid, 2026-09-29)
+zhuocm6dtgyxuk8h
