@@ -1,10 +1,10 @@
 # ============================================================
-# 线级入口: 一次 dispatch 构建本线全部 9 个子版本(30/50/56/57/66/89/89_mtk/118/118_mtk)
+# 线级入口: 一次 dispatch 构建本线全部 8 个子版本(57/75/115/118/128/134/141/157)
 # 单版本 workflow 已转为 workflow_call 可复用模块(不在 Actions 列表显示)
 # only_sub_level 留空 = 全部; 填子版本号 = 只建该版本
 # 每个子版本独立出 AK3 包、独立 release, 与原单版本构建行为一致
 # ============================================================
-name: "内核构建 - Linux 6.6（9 个子版本: 30/50/56/57/66/89/89_mtk/118/118_mtk）"
+name: "6.1（9 个子版本: 57/75/115/118/128/134/141/157）"
 
 permissions:
   contents: write
@@ -14,18 +14,23 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
+      auto_release:
+        description: "是否发布 Release（默认不发布，产物留在 Actions Artifacts）"
+        required: false
+        type: boolean
+        default: false
       only_sub_level:
-        description: '只构建指定子版本(留空=全部; 可填 30/50/56/57/66/89/89_mtk/118/118_mtk)'
+        description: '只构建指定子版本(留空=全部; 可填 57/75/115/118/128/134/141/157)'
         required: false
         type: string
         default: ''
       ksu_type:
-        description: "KernelSU分支(ReSukiSU/SukiSU Ultra/KernelSU Next/KSU(原版)/无内置KSU,默认ReSukiSU)"
+        description: "KernelSU分支(BakaSU/SukiSU Ultra/KernelSU Next/KSU(原版)/无内置KSU,默认BakaSU)"
         required: true
         type: choice
-        default: "resukisu"
+        default: "bakasu"
         options:
-          - "resukisu"
+          - "bakasu"
           - "sukisu"
           - "ksunext"
           - "ksu"
@@ -51,7 +56,7 @@ on:
         type: boolean
         default: false
       bbr_enable:
-        description: "是否启用bbr算法(优化上行数据,对手机日用无太大意义甚至可能负优化;false关闭,true仅加入算法,default启用算法并设为默认)"
+        description: "是否启用bbr算法(优化上行数据,对手机日用无太大意义甚至可能负优化;false关闭,true仅加入算法,default设为默认)"
         required: true
         type: choice
         default: "false"
@@ -73,11 +78,11 @@ on:
         required: true
         type: boolean
         default: false
-      adios_enable:
-        description: "是否启用ADIOS IO调度器支持(提升IO读写性能)"
+      ssg_enable:
+        description: "是否启用三星SSG IO调度器支持(提升IO读写性能; 在一加12上可能导致bug)"
         required: true
         type: boolean
-        default: false
+        default: true
       rekernel_enable:
         description: "是否启用Re-Kernel支持(与Freezer/NoActive等软件配合, 提升应用冻结能力)"
         required: true
@@ -88,6 +93,11 @@ on:
         required: true
         type: boolean
         default: true
+      use_nomount:
+        description: "是否启用NoMount挂载元模块(试点: 当前仅6.1.141支持; 内核VFS层无挂载注入,对抗statfs/mountinfo类检测;默认关闭)"
+        required: true
+        type: boolean
+        default: false
       ccache_update:
         description: "更新ccache缓存(将本次编译生成的ccache缓存覆盖至仓库缓存，在更改编译配置、源码或需要刷新缓存时开启)"
         required: true
@@ -115,82 +125,22 @@ jobs:
       - uses: actions/checkout@v7
       - name: 校验 line 文件 uses 声明指向本仓 modules 分支
         run: |
-          total=$(grep -hE "^[[:space:]]*uses: [^ ]*fastbuild_" .github/workflows/line_*.yml | wc -l)
+          total=$(grep -hE "^[[:space:]]*uses: [^ ]*fastbuild_" .github/workflows/{line,ver,dev}_*.yml | wc -l)
           if [ "$total" -lt 1 ]; then
             echo "::error::line 文件中未找到任何模块 uses 声明"
             exit 1
           fi
-          bad=$(grep -hE "^[[:space:]]*uses: [^ ]*fastbuild_" .github/workflows/line_*.yml | grep -vE "^[[:space:]]*uses: ${GITHUB_REPOSITORY}/\.github/workflows/fastbuild_[A-Za-z0-9_.-]+\.yml@modules[[:space:]]*$" || true)
+          bad=$(grep -hE "^[[:space:]]*uses: [^ ]*fastbuild_" .github/workflows/{line,ver,dev}_*.yml | grep -vE "^[[:space:]]*uses: ${GITHUB_REPOSITORY}/\.github/workflows/fastbuild_[A-Za-z0-9_.-]+\.yml@modules[[:space:]]*$" || true)
           if [ -n "$bad" ]; then
             echo "::error::uses 声明不符合规范——必须指向 ${GITHUB_REPOSITORY} 的 modules 分支模块（复制 line 文件时勿忘改仓库名）："
             echo "$bad"
             exit 1
           fi
           echo "OK: $total 处 uses 全部指向 ${GITHUB_REPOSITORY}@modules"
-  v30:
-    needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '30' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.30.yml@modules
-    with:
-        ksu_type: ${{ inputs.ksu_type }}
-        susfs_enable: ${{ inputs.susfs_enable }}
-        kpm_enable: ${{ inputs.kpm_enable }}
-        lz4_enable: ${{ inputs.lz4_enable }}
-        lz4kd_enable: ${{ inputs.lz4kd_enable }}
-        bbr_enable: ${{ inputs.bbr_enable }}
-        droidspaces_enable: ${{ inputs.droidspaces_enable }}
-        better_net: ${{ inputs.better_net }}
-        adios_enable: ${{ inputs.adios_enable }}
-        rekernel_enable: ${{ inputs.rekernel_enable }}
-        baseband_guard: ${{ inputs.baseband_guard }}
-        ccache_update: ${{ inputs.ccache_update }}
-        ccache_debug: ${{ inputs.ccache_debug }}
-        kernel_suffix: ${{ inputs.kernel_suffix }}
-    secrets: inherit
-  v50:
-    needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '50' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.50.yml@modules
-    with:
-        ksu_type: ${{ inputs.ksu_type }}
-        susfs_enable: ${{ inputs.susfs_enable }}
-        kpm_enable: ${{ inputs.kpm_enable }}
-        lz4_enable: ${{ inputs.lz4_enable }}
-        lz4kd_enable: ${{ inputs.lz4kd_enable }}
-        bbr_enable: ${{ inputs.bbr_enable }}
-        droidspaces_enable: ${{ inputs.droidspaces_enable }}
-        better_net: ${{ inputs.better_net }}
-        adios_enable: ${{ inputs.adios_enable }}
-        rekernel_enable: ${{ inputs.rekernel_enable }}
-        baseband_guard: ${{ inputs.baseband_guard }}
-        ccache_update: ${{ inputs.ccache_update }}
-        ccache_debug: ${{ inputs.ccache_debug }}
-        kernel_suffix: ${{ inputs.kernel_suffix }}
-    secrets: inherit
-  v56:
-    needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '56' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.56.yml@modules
-    with:
-        ksu_type: ${{ inputs.ksu_type }}
-        susfs_enable: ${{ inputs.susfs_enable }}
-        kpm_enable: ${{ inputs.kpm_enable }}
-        lz4_enable: ${{ inputs.lz4_enable }}
-        lz4kd_enable: ${{ inputs.lz4kd_enable }}
-        bbr_enable: ${{ inputs.bbr_enable }}
-        droidspaces_enable: ${{ inputs.droidspaces_enable }}
-        better_net: ${{ inputs.better_net }}
-        adios_enable: ${{ inputs.adios_enable }}
-        rekernel_enable: ${{ inputs.rekernel_enable }}
-        baseband_guard: ${{ inputs.baseband_guard }}
-        ccache_update: ${{ inputs.ccache_update }}
-        ccache_debug: ${{ inputs.ccache_debug }}
-        kernel_suffix: ${{ inputs.kernel_suffix }}
-    secrets: inherit
   v57:
     needs: guard
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '57' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.57.yml@modules
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.57.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -200,17 +150,18 @@ jobs:
         bbr_enable: ${{ inputs.bbr_enable }}
         droidspaces_enable: ${{ inputs.droidspaces_enable }}
         better_net: ${{ inputs.better_net }}
-        adios_enable: ${{ inputs.adios_enable }}
+        ssg_enable: ${{ inputs.ssg_enable }}
         rekernel_enable: ${{ inputs.rekernel_enable }}
         baseband_guard: ${{ inputs.baseband_guard }}
         ccache_update: ${{ inputs.ccache_update }}
         ccache_debug: ${{ inputs.ccache_debug }}
         kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
     secrets: inherit
-  v66:
+  v75:
     needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '66' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.66.yml@modules
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '75' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.75.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -220,17 +171,18 @@ jobs:
         bbr_enable: ${{ inputs.bbr_enable }}
         droidspaces_enable: ${{ inputs.droidspaces_enable }}
         better_net: ${{ inputs.better_net }}
-        adios_enable: ${{ inputs.adios_enable }}
+        ssg_enable: ${{ inputs.ssg_enable }}
         rekernel_enable: ${{ inputs.rekernel_enable }}
         baseband_guard: ${{ inputs.baseband_guard }}
         ccache_update: ${{ inputs.ccache_update }}
         ccache_debug: ${{ inputs.ccache_debug }}
         kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
     secrets: inherit
-  v89:
+  v115:
     needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '89' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.89.yml@modules
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '115' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.115.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -240,37 +192,18 @@ jobs:
         bbr_enable: ${{ inputs.bbr_enable }}
         droidspaces_enable: ${{ inputs.droidspaces_enable }}
         better_net: ${{ inputs.better_net }}
-        adios_enable: ${{ inputs.adios_enable }}
+        ssg_enable: ${{ inputs.ssg_enable }}
         rekernel_enable: ${{ inputs.rekernel_enable }}
         baseband_guard: ${{ inputs.baseband_guard }}
         ccache_update: ${{ inputs.ccache_update }}
         ccache_debug: ${{ inputs.ccache_debug }}
         kernel_suffix: ${{ inputs.kernel_suffix }}
-    secrets: inherit
-  v89_mtk:
-    needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '89_mtk' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.89_mtk.yml@modules
-    with:
-        ksu_type: ${{ inputs.ksu_type }}
-        susfs_enable: ${{ inputs.susfs_enable }}
-        kpm_enable: ${{ inputs.kpm_enable }}
-        lz4_enable: ${{ inputs.lz4_enable }}
-        lz4kd_enable: ${{ inputs.lz4kd_enable }}
-        bbr_enable: ${{ inputs.bbr_enable }}
-        droidspaces_enable: ${{ inputs.droidspaces_enable }}
-        better_net: ${{ inputs.better_net }}
-        adios_enable: ${{ inputs.adios_enable }}
-        rekernel_enable: ${{ inputs.rekernel_enable }}
-        baseband_guard: ${{ inputs.baseband_guard }}
-        ccache_update: ${{ inputs.ccache_update }}
-        ccache_debug: ${{ inputs.ccache_debug }}
-        kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
     secrets: inherit
   v118:
     needs: guard
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '118' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.118.yml@modules
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.118.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -280,17 +213,18 @@ jobs:
         bbr_enable: ${{ inputs.bbr_enable }}
         droidspaces_enable: ${{ inputs.droidspaces_enable }}
         better_net: ${{ inputs.better_net }}
-        adios_enable: ${{ inputs.adios_enable }}
+        ssg_enable: ${{ inputs.ssg_enable }}
         rekernel_enable: ${{ inputs.rekernel_enable }}
         baseband_guard: ${{ inputs.baseband_guard }}
         ccache_update: ${{ inputs.ccache_update }}
         ccache_debug: ${{ inputs.ccache_debug }}
         kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
     secrets: inherit
-  v118_mtk:
+  v128:
     needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '118_mtk' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.6.118_mtk.yml@modules
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '128' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.128.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -300,10 +234,97 @@ jobs:
         bbr_enable: ${{ inputs.bbr_enable }}
         droidspaces_enable: ${{ inputs.droidspaces_enable }}
         better_net: ${{ inputs.better_net }}
-        adios_enable: ${{ inputs.adios_enable }}
+        ssg_enable: ${{ inputs.ssg_enable }}
         rekernel_enable: ${{ inputs.rekernel_enable }}
         baseband_guard: ${{ inputs.baseband_guard }}
         ccache_update: ${{ inputs.ccache_update }}
         ccache_debug: ${{ inputs.ccache_debug }}
         kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
+    secrets: inherit
+  v134:
+    needs: guard
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '134' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.134.yml@modules
+    with:
+        ksu_type: ${{ inputs.ksu_type }}
+        susfs_enable: ${{ inputs.susfs_enable }}
+        kpm_enable: ${{ inputs.kpm_enable }}
+        lz4_enable: ${{ inputs.lz4_enable }}
+        lz4kd_enable: ${{ inputs.lz4kd_enable }}
+        bbr_enable: ${{ inputs.bbr_enable }}
+        droidspaces_enable: ${{ inputs.droidspaces_enable }}
+        better_net: ${{ inputs.better_net }}
+        ssg_enable: ${{ inputs.ssg_enable }}
+        rekernel_enable: ${{ inputs.rekernel_enable }}
+        baseband_guard: ${{ inputs.baseband_guard }}
+        ccache_update: ${{ inputs.ccache_update }}
+        ccache_debug: ${{ inputs.ccache_debug }}
+        kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
+    secrets: inherit
+  v141:
+    needs: guard
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '141' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.141.yml@modules
+    with:
+        ksu_type: ${{ inputs.ksu_type }}
+        susfs_enable: ${{ inputs.susfs_enable }}
+        kpm_enable: ${{ inputs.kpm_enable }}
+        lz4_enable: ${{ inputs.lz4_enable }}
+        lz4kd_enable: ${{ inputs.lz4kd_enable }}
+        bbr_enable: ${{ inputs.bbr_enable }}
+        droidspaces_enable: ${{ inputs.droidspaces_enable }}
+        better_net: ${{ inputs.better_net }}
+        ssg_enable: ${{ inputs.ssg_enable }}
+        rekernel_enable: ${{ inputs.rekernel_enable }}
+        baseband_guard: ${{ inputs.baseband_guard }}
+        use_nomount: ${{ inputs.use_nomount }}
+        ccache_update: ${{ inputs.ccache_update }}
+        ccache_debug: ${{ inputs.ccache_debug }}
+        kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
+    secrets: inherit
+  v157:
+    needs: guard
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '157' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.157.yml@modules
+    with:
+        ksu_type: ${{ inputs.ksu_type }}
+        susfs_enable: ${{ inputs.susfs_enable }}
+        kpm_enable: ${{ inputs.kpm_enable }}
+        lz4_enable: ${{ inputs.lz4_enable }}
+        lz4kd_enable: ${{ inputs.lz4kd_enable }}
+        bbr_enable: ${{ inputs.bbr_enable }}
+        droidspaces_enable: ${{ inputs.droidspaces_enable }}
+        better_net: ${{ inputs.better_net }}
+        ssg_enable: ${{ inputs.ssg_enable }}
+        rekernel_enable: ${{ inputs.rekernel_enable }}
+        baseband_guard: ${{ inputs.baseband_guard }}
+        ccache_update: ${{ inputs.ccache_update }}
+        ccache_debug: ${{ inputs.ccache_debug }}
+        kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
+    secrets: inherit
+
+  v128_mtk6897:
+    needs: guard
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '128_mtk6897' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.128_mtk6897.yml@modules
+    with:
+        ksu_type: ${{ inputs.ksu_type }}
+        susfs_enable: ${{ inputs.susfs_enable }}
+        kpm_enable: ${{ inputs.kpm_enable }}
+        lz4_enable: ${{ inputs.lz4_enable }}
+        lz4kd_enable: ${{ inputs.lz4kd_enable }}
+        bbr_enable: ${{ inputs.bbr_enable }}
+        droidspaces_enable: ${{ inputs.droidspaces_enable }}
+        better_net: ${{ inputs.better_net }}
+        ssg_enable: ${{ inputs.ssg_enable }}
+        rekernel_enable: ${{ inputs.rekernel_enable }}
+        baseband_guard: ${{ inputs.baseband_guard }}
+        ccache_update: ${{ inputs.ccache_update }}
+        ccache_debug: ${{ inputs.ccache_debug }}
+        kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
     secrets: inherit

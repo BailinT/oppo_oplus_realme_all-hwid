@@ -1,10 +1,10 @@
 # ============================================================
-# 线级入口: 一次 dispatch 构建本线全部 8 个子版本(57/75/115/118/128/134/141/157)
+# 线级入口: 一次 dispatch 构建本线全部 4 个子版本(66/110/149/168)
 # 单版本 workflow 已转为 workflow_call 可复用模块(不在 Actions 列表显示)
 # only_sub_level 留空 = 全部; 填子版本号 = 只建该版本
 # 每个子版本独立出 AK3 包、独立 release, 与原单版本构建行为一致
 # ============================================================
-name: "内核构建 - Linux 6.1（8 个子版本: 57/75/115/118/128/134/141/157）"
+name: "一加 Ace / Ace 竞速版 / 10R"
 
 permissions:
   contents: write
@@ -14,18 +14,23 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
+      auto_release:
+        description: "是否发布 Release（默认不发布，产物留在 Actions Artifacts）"
+        required: false
+        type: boolean
+        default: false
       only_sub_level:
-        description: '只构建指定子版本(留空=全部; 可填 57/75/115/118/128/134/141/157)'
+        description: '只构建指定子版本(留空=全部; 可填 66/110/149/168/198/209/209_mtk/226/236)'
         required: false
         type: string
         default: ''
       ksu_type:
-        description: "KernelSU分支(ReSukiSU/SukiSU Ultra/KernelSU Next/KSU(原版)/无内置KSU,默认ReSukiSU)"
+        description: "KernelSU分支(BakaSU/SukiSU Ultra/KernelSU Next/KSU(原版)/无内置KSU,默认BakaSU)"
         required: true
         type: choice
-        default: "resukisu"
+        default: "bakasu"
         options:
-          - "resukisu"
+          - "bakasu"
           - "sukisu"
           - "ksunext"
           - "ksu"
@@ -41,10 +46,10 @@ on:
         type: boolean
         default: true
       lz4_enable:
-        description: "是否安装 lz4 1.10.0+zstd 1.5.7 补丁"
+        description: "是否安装 lz4 1.10.0+zstd 1.5.7 补丁(5.10适配性未验证,建议关闭)"
         required: true
         type: boolean
-        default: true
+        default: false
       lz4kd_enable:
         description: "是否安装 LZ4KD 补丁(若已开启lz4+zstd补丁则可不开启)"
         required: true
@@ -59,22 +64,13 @@ on:
           - "false"
           - "true"
           - "default"
-      droidspaces_enable:
-        description: "是否启用Droidspaces容器支持(轻量化的完整Linux容器支持;false关闭,standard开启容器+ntsync支持,extend开启更多测试支持项)"
-        required: true
-        type: choice
-        default: "false"
-        options:
-          - "false"
-          - "standard"
-          - "extend"
       better_net:
         description: "是否开启网络功能拓展配置(用于为ipset及需要iptables等高级网络功能内核支持的程序提供支持)"
         required: true
         type: boolean
         default: false
       ssg_enable:
-        description: "是否启用三星SSG IO调度器支持(提升IO读写性能; 在一加12上可能导致bug)"
+        description: "是否启用三星SSG IO调度器支持(提升IO读写性能; 部分机型开启后可能导致bug)"
         required: true
         type: boolean
         default: true
@@ -84,10 +80,10 @@ on:
         type: boolean
         default: false
       baseband_guard:
-        description: "是否开启内核级基带保护(阻止一切对非用户分区的写入，有效防止格机)"
+        description: "是否开启内核级基带保护(阻止一切对非用户分区的写入，有效防止格机;5.10适配性未验证,建议先关闭)"
         required: true
         type: boolean
-        default: true
+        default: false
       ccache_update:
         description: "更新ccache缓存(将本次编译生成的ccache缓存覆盖至仓库缓存，在更改编译配置、源码或需要刷新缓存时开启)"
         required: true
@@ -115,22 +111,22 @@ jobs:
       - uses: actions/checkout@v7
       - name: 校验 line 文件 uses 声明指向本仓 modules 分支
         run: |
-          total=$(grep -hE "^[[:space:]]*uses: [^ ]*fastbuild_" .github/workflows/line_*.yml | wc -l)
+          total=$(grep -hE "^[[:space:]]*uses: [^ ]*fastbuild_" .github/workflows/{line,ver,dev}_*.yml | wc -l)
           if [ "$total" -lt 1 ]; then
             echo "::error::line 文件中未找到任何模块 uses 声明"
             exit 1
           fi
-          bad=$(grep -hE "^[[:space:]]*uses: [^ ]*fastbuild_" .github/workflows/line_*.yml | grep -vE "^[[:space:]]*uses: ${GITHUB_REPOSITORY}/\.github/workflows/fastbuild_[A-Za-z0-9_.-]+\.yml@modules[[:space:]]*$" || true)
+          bad=$(grep -hE "^[[:space:]]*uses: [^ ]*fastbuild_" .github/workflows/{line,ver,dev}_*.yml | grep -vE "^[[:space:]]*uses: ${GITHUB_REPOSITORY}/\.github/workflows/fastbuild_[A-Za-z0-9_.-]+\.yml@modules[[:space:]]*$" || true)
           if [ -n "$bad" ]; then
             echo "::error::uses 声明不符合规范——必须指向 ${GITHUB_REPOSITORY} 的 modules 分支模块（复制 line 文件时勿忘改仓库名）："
             echo "$bad"
             exit 1
           fi
           echo "OK: $total 处 uses 全部指向 ${GITHUB_REPOSITORY}@modules"
-  v57:
+  v66:
     needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '57' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.57.yml@modules
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '66' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.66.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -138,7 +134,6 @@ jobs:
         lz4_enable: ${{ inputs.lz4_enable }}
         lz4kd_enable: ${{ inputs.lz4kd_enable }}
         bbr_enable: ${{ inputs.bbr_enable }}
-        droidspaces_enable: ${{ inputs.droidspaces_enable }}
         better_net: ${{ inputs.better_net }}
         ssg_enable: ${{ inputs.ssg_enable }}
         rekernel_enable: ${{ inputs.rekernel_enable }}
@@ -146,11 +141,12 @@ jobs:
         ccache_update: ${{ inputs.ccache_update }}
         ccache_debug: ${{ inputs.ccache_debug }}
         kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
     secrets: inherit
-  v75:
+  v110:
     needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '75' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.75.yml@modules
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '110' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.110.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -158,7 +154,6 @@ jobs:
         lz4_enable: ${{ inputs.lz4_enable }}
         lz4kd_enable: ${{ inputs.lz4kd_enable }}
         bbr_enable: ${{ inputs.bbr_enable }}
-        droidspaces_enable: ${{ inputs.droidspaces_enable }}
         better_net: ${{ inputs.better_net }}
         ssg_enable: ${{ inputs.ssg_enable }}
         rekernel_enable: ${{ inputs.rekernel_enable }}
@@ -166,11 +161,12 @@ jobs:
         ccache_update: ${{ inputs.ccache_update }}
         ccache_debug: ${{ inputs.ccache_debug }}
         kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
     secrets: inherit
-  v115:
+  v149:
     needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '115' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.115.yml@modules
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '149' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.149.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -178,7 +174,6 @@ jobs:
         lz4_enable: ${{ inputs.lz4_enable }}
         lz4kd_enable: ${{ inputs.lz4kd_enable }}
         bbr_enable: ${{ inputs.bbr_enable }}
-        droidspaces_enable: ${{ inputs.droidspaces_enable }}
         better_net: ${{ inputs.better_net }}
         ssg_enable: ${{ inputs.ssg_enable }}
         rekernel_enable: ${{ inputs.rekernel_enable }}
@@ -186,11 +181,12 @@ jobs:
         ccache_update: ${{ inputs.ccache_update }}
         ccache_debug: ${{ inputs.ccache_debug }}
         kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
     secrets: inherit
-  v118:
+  v168:
     needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '118' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.118.yml@modules
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '168' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.168.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
@@ -198,7 +194,6 @@ jobs:
         lz4_enable: ${{ inputs.lz4_enable }}
         lz4kd_enable: ${{ inputs.lz4kd_enable }}
         bbr_enable: ${{ inputs.bbr_enable }}
-        droidspaces_enable: ${{ inputs.droidspaces_enable }}
         better_net: ${{ inputs.better_net }}
         ssg_enable: ${{ inputs.ssg_enable }}
         rekernel_enable: ${{ inputs.rekernel_enable }}
@@ -206,84 +201,5 @@ jobs:
         ccache_update: ${{ inputs.ccache_update }}
         ccache_debug: ${{ inputs.ccache_debug }}
         kernel_suffix: ${{ inputs.kernel_suffix }}
-    secrets: inherit
-  v128:
-    needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '128' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.128.yml@modules
-    with:
-        ksu_type: ${{ inputs.ksu_type }}
-        susfs_enable: ${{ inputs.susfs_enable }}
-        kpm_enable: ${{ inputs.kpm_enable }}
-        lz4_enable: ${{ inputs.lz4_enable }}
-        lz4kd_enable: ${{ inputs.lz4kd_enable }}
-        bbr_enable: ${{ inputs.bbr_enable }}
-        droidspaces_enable: ${{ inputs.droidspaces_enable }}
-        better_net: ${{ inputs.better_net }}
-        ssg_enable: ${{ inputs.ssg_enable }}
-        rekernel_enable: ${{ inputs.rekernel_enable }}
-        baseband_guard: ${{ inputs.baseband_guard }}
-        ccache_update: ${{ inputs.ccache_update }}
-        ccache_debug: ${{ inputs.ccache_debug }}
-        kernel_suffix: ${{ inputs.kernel_suffix }}
-    secrets: inherit
-  v134:
-    needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '134' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.134.yml@modules
-    with:
-        ksu_type: ${{ inputs.ksu_type }}
-        susfs_enable: ${{ inputs.susfs_enable }}
-        kpm_enable: ${{ inputs.kpm_enable }}
-        lz4_enable: ${{ inputs.lz4_enable }}
-        lz4kd_enable: ${{ inputs.lz4kd_enable }}
-        bbr_enable: ${{ inputs.bbr_enable }}
-        droidspaces_enable: ${{ inputs.droidspaces_enable }}
-        better_net: ${{ inputs.better_net }}
-        ssg_enable: ${{ inputs.ssg_enable }}
-        rekernel_enable: ${{ inputs.rekernel_enable }}
-        baseband_guard: ${{ inputs.baseband_guard }}
-        ccache_update: ${{ inputs.ccache_update }}
-        ccache_debug: ${{ inputs.ccache_debug }}
-        kernel_suffix: ${{ inputs.kernel_suffix }}
-    secrets: inherit
-  v141:
-    needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '141' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.141.yml@modules
-    with:
-        ksu_type: ${{ inputs.ksu_type }}
-        susfs_enable: ${{ inputs.susfs_enable }}
-        kpm_enable: ${{ inputs.kpm_enable }}
-        lz4_enable: ${{ inputs.lz4_enable }}
-        lz4kd_enable: ${{ inputs.lz4kd_enable }}
-        bbr_enable: ${{ inputs.bbr_enable }}
-        droidspaces_enable: ${{ inputs.droidspaces_enable }}
-        better_net: ${{ inputs.better_net }}
-        ssg_enable: ${{ inputs.ssg_enable }}
-        rekernel_enable: ${{ inputs.rekernel_enable }}
-        baseband_guard: ${{ inputs.baseband_guard }}
-        ccache_update: ${{ inputs.ccache_update }}
-        ccache_debug: ${{ inputs.ccache_debug }}
-        kernel_suffix: ${{ inputs.kernel_suffix }}
-    secrets: inherit
-  v157:
-    needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '157' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.157.yml@modules
-    with:
-        ksu_type: ${{ inputs.ksu_type }}
-        susfs_enable: ${{ inputs.susfs_enable }}
-        kpm_enable: ${{ inputs.kpm_enable }}
-        lz4_enable: ${{ inputs.lz4_enable }}
-        lz4kd_enable: ${{ inputs.lz4kd_enable }}
-        bbr_enable: ${{ inputs.bbr_enable }}
-        droidspaces_enable: ${{ inputs.droidspaces_enable }}
-        better_net: ${{ inputs.better_net }}
-        ssg_enable: ${{ inputs.ssg_enable }}
-        rekernel_enable: ${{ inputs.rekernel_enable }}
-        baseband_guard: ${{ inputs.baseband_guard }}
-        ccache_update: ${{ inputs.ccache_update }}
-        ccache_debug: ${{ inputs.ccache_debug }}
-        kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
     secrets: inherit
