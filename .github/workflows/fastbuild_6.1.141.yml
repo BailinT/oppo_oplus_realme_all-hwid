@@ -11,11 +11,16 @@ env:
 on:
   workflow_call:
     inputs:
+      auto_release:
+        description: "是否发布 Release（默认不发布，产物留在 Actions Artifacts）"
+        required: false
+        type: boolean
+        default: false
       ksu_type:
-        description: 'KernelSU分支(ReSukiSU/SukiSU Ultra/KernelSU Next/KSU(原版)/无内置KSU,默认ReSukiSU)'
+        description: 'KernelSU分支(BakaSU/SukiSU Ultra/KernelSU Next/KSU(原版)/无内置KSU,默认BakaSU)'
         required: true
         type: string
-        default: 'resukisu'
+        default: 'bakasu'
       susfs_enable:
         description: '是否开启susfs(用于增强隐藏环境挂载功能; 可能轻微增加耗电，上游更新导致不稳定时或不需要可关闭)'
         required: true
@@ -66,6 +71,11 @@ on:
         required: true
         type: boolean
         default: true
+      use_nomount:
+        description: '是否启用NoMount挂载元模块(内核VFS层无挂载注入,不产生真实mount,对抗statfs/mountinfo类环境检测;需配合设备端NoMount管理器使用;默认关闭)'
+        required: true
+        type: boolean
+        default: false
       ccache_update:
         description: '更新ccache缓存(将本次编译生成的ccache缓存覆盖至仓库缓存，在更改编译配置、源码或需要刷新缓存时开启)'
         required: true
@@ -249,9 +259,9 @@ jobs:
         run: |
           # 进入内核工作目录
           cd kernel_workspace
-          if [[ ${{ inputs.ksu_type }} == "sukisu" || ${{ inputs.ksu_type }} == "resukisu" ]]; then
-            echo "正在配置ReSukiSU（由于SukiSU长期未维护无法正常编译，且ReSukiSU兼容sukisu管理器，故SukiSU源码仓库已重定向为resukisu）..."
-            curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/refs/heads/main/kernel/setup.sh" | bash -s main
+          if [[ ${{ inputs.ksu_type }} == "sukisu" || ${{ inputs.ksu_type }} == "bakasu" ]]; then
+            echo "正在配置BakaSU（由于SukiSU长期未维护无法正常编译，且BakaSU兼容sukisu管理器，故SukiSU源码仓库已重定向为bakasu）..."
+            curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/refs/heads/main/kernel/setup.sh" | bash -s main
             echo 'CONFIG_KSU_FULL_NAME_FORMAT="%TAG_NAME%-%COMMIT_SHA%@抖音王德发刷机"' >> ./common/arch/arm64/configs/gki_defconfig
             cd ./KernelSU
             # 生成自定义版本号（基于提交计数）, 失败时使用 114514
@@ -324,7 +334,7 @@ jobs:
           cd ./common
           git apply -p1 < 001-lz4.patch || true
           patch -p1 -F 3 < 002-zstd.patch || true
-          [ -f "$GITHUB_WORKSPACE/kernel_workspace/common/lib/zstd/common/portability_macros.h" ] || cp "$GITHUB_WORKSPACE/scripts/zstd_portability_macros.h" "$GITHUB_WORKSPACE/kernel_workspace/common/lib/zstd/common/portability_macros.h"
+          [ -f "$GITHUB_WORKSPACE/kernel_workspace/common/lib/zstd/common/portability_macros.h" ] || cp "$GITHUB_WORKSPACE/scripts/zstd_portability_macros.h" $GITHUB_WORKSPACE/kernel_workspace/common/lib/zstd/common/portability_macros.h
 
       - name: 应用 lz4kd 补丁
         if: inputs.lz4kd_enable
@@ -384,14 +394,32 @@ jobs:
           sed -i 's/check_defconfig//' ./common/build.config.gki
           #跳过将uapi标准头安装到 usr/include 目录的不必要操作，节省编译时间
           echo "CONFIG_HEADERS_INSTALL=n" >> ./common/arch/arm64/configs/gki_defconfig
-          # IKCONFIG 内容脱敏: /proc/config.gz 嵌入配置过滤 CONFIG_KSU/KernelSU/SUSFS/NOMOUNT 行(2026-09-24 防泄露; 文件与权限不动)
-          wget https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/$GITHUB_REF_NAME/other_patch/ikconfig_sanitize-6.1.patch -O ./common/ikconfig_sanitize.patch
-          ( cd ./common && patch -p1 -F 3 < ikconfig_sanitize.patch )
           # 应用 CVE_2026_43499 修复补丁
           cd common
           cp "$GITHUB_WORKSPACE/other_patch/cve-2026-43499-rtmutex-6.1.patch" .
           patch -p1 -F 3 < cve-2026-43499-rtmutex-6.1.patch
-          
+          # IKCONFIG 内容脱敏: /proc/config.gz 嵌入配置过滤 CONFIG_KSU/SUSFS/NOMOUNT 行(2026-09-24 防泄露; 文件与权限不动, vendor 读取不受影响)
+          cp "$GITHUB_WORKSPACE/other_patch/ikconfig_sanitize-6.1.patch" .
+          patch -p1 -F 3 < ikconfig_sanitize-6.1.patch
+
+      - name: 集成 NoMount 挂载元模块
+        if: inputs.use_nomount
+        run: |
+          cd kernel_workspace
+          # NoMount(maxsteeel/nomount): 内核VFS层无挂载注入, 不产生真实mount, 消除statfs/mountinfo类挂载痕迹; 与SUSFS sus_mount互补共存
+          # 固定 commit 016375cd(dev头, 含09-12内核兼容修复), setup.sh 与 checkout 目标同源pin死, 防漂移
+          curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors \
+            https://raw.githubusercontent.com/maxsteeel/nomount/016375cd/kernel/setup.sh | bash -s 016375cd
+          if [ ! -e ./common/fs/nomount ]; then
+            echo "::error::NoMount 集成失败: common/fs/nomount 软链缺失"
+            exit 1
+          fi
+          grep -q "nomount" ./common/fs/Makefile || { echo "::error::fs/Makefile 未注册 nomount"; exit 1; }
+          grep -q 'source "fs/nomount/Kconfig"' ./common/fs/Kconfig || { echo "::error::fs/Kconfig 未挂接 nomount"; exit 1; }
+          echo "CONFIG_NOMOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          grep -q "^CONFIG_NOMOUNT=y" ./common/arch/arm64/configs/gki_defconfig || { echo "::error::CONFIG_NOMOUNT 写入失败"; exit 1; }
+          echo "NoMount 集成完成: $(git -C NoMount rev-parse --short HEAD)"
+
       - name: 启用网络功能增强优化配置
         if: inputs.better_net
         run: |
@@ -481,7 +509,7 @@ jobs:
             patch -p1 -F 3 < fix_oplus_bsp_midas.patch || true
             # 应用 NTSync 补丁
             cp "$GITHUB_WORKSPACE/droidspaces_patch/ntsync_base.patch" .
-            cp "$GITHUB_WORKSPACE/droidspaces_patch/ntsync_compat_${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch" .
+            cp "$GITHUB_WORKSPACE/droidspaces_patch/ntsync_compat_${{" . env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch
             patch -p1 -F 3 < ntsync_base.patch || true
             patch -p1 -F 3 < ntsync_compat_${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch || true
             # 开启 Droidspaces 容器所需内核支持
@@ -632,24 +660,25 @@ jobs:
           KD=.; [ -d ./drivers ] || KD=./common
           [ -f "$KD/Makefile" ] || KD="$GITHUB_WORKSPACE/kernel_workspace/common"
           KMI="${ANDROID_VERSION}-${KERNEL_VERSION}"
-          cp "$GITHUB_WORKSPACE/other_patch/bbrv3_backport_${KMI}.patch" /tmp/bbrv3_kmi.patch 2>/dev/null || true
-          cp "$GITHUB_WORKSPACE/other_patch/unicode_bypass_fix_6.1-.patch" /tmp/uni_bypass.patch 2>/dev/null || true
-          cp "$GITHUB_WORKSPACE/other_patch/unicode_bypass_fix_6.1+.patch" /tmp/uni_bypass2.patch 2>/dev/null || true
+          cp "$GITHUB_WORKSPACE/other_patch/bbrv3_backport_${KMI}.patch" /tmp/bbrv3_kmi.patch || true
+          cp "$GITHUB_WORKSPACE/other_patch/unicode_bypass_fix_6.1-.patch" /tmp/uni_bypass.patch || true
+          cp "$GITHUB_WORKSPACE/other_patch/unicode_bypass_fix_6.1+.patch" /tmp/uni_bypass2.patch || true
           UNI=uni_bypass.patch; case "$KERNEL_VERSION" in 5.*) : ;; *) UNI=uni_bypass2.patch ;; esac
           if [ -s /tmp/bbrv3_kmi.patch ]; then
             patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_kmi.patch || true
             echo "CONFIG_TCP_CONG_BBR3=y" >> "$KD/arch/arm64/configs/gki_defconfig"
           fi
           if [ "$KMI" = "android12-5.10" ] && [ -s /tmp/bbrv3_sysctl_add.patch ] && ! grep -q "int proc_dou8vec_minmax(" "$KD/include/linux/sysctl.h"; then
-            wget -qO /tmp/bbrv3_sys1.patch "https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/$GITHUB_REF_NAME/other_patch/bbrv3_sysctl_add_proc_dou8vec_minmax.patch" || true
-            wget -qO /tmp/bbrv3_sys2.patch "https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/$GITHUB_REF_NAME/other_patch/bbrv3_sysctl_fix_dou8vec.patch" || true
+            cp "$GITHUB_WORKSPACE/other_patch/bbrv3_sysctl_add_proc_dou8vec_minmax.patch" /tmp/bbrv3_sys1.patch || true
+            cp "$GITHUB_WORKSPACE/other_patch/bbrv3_sysctl_fix_dou8vec.patch" /tmp/bbrv3_sys2.patch || true
             patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_sys1.patch || true
             patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_sys2.patch || true
           fi
           [ -s /tmp/$UNI ] && patch -d "$KD" -p1 -F 3 --forward < /tmp/$UNI || true
           make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="ccache clang" LD="ld.lld" HOSTLD=ld.lld O=out KCFLAGS+=-O2 KCFLAGS+=-Wno-error gki_defconfig &&
           # 补丁拒绝检查(.rej 残留=有 hunk 未打上, 防静默缺补丁)
-          bash "$GITHUB_WORKSPACE/scripts/check_patch_rejects.sh"
+          cp "$GITHUB_WORKSPACE/scripts/check_patch_rejects.sh" /tmp/check_patch_rejects.sh
+          bash /tmp/check_patch_rejects.sh
           make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="$(pwd)/cc-wrapper" LD="$(pwd)/ld-wrapper" HOSTLD=ld.lld O=out KCFLAGS+=-O2 KCFLAGS+=-Wno-error Image
           
           # 编译后时间劫持二次校验
@@ -695,8 +724,8 @@ jobs:
           fi
           if [[ ${{ inputs.ksu_type }} == "sukisu" ]]; then
             KSU_TYPENAME="SukiSU"
-          elif [[ ${{ inputs.ksu_type }} == "resukisu" ]]; then
-            KSU_TYPENAME="ReSukiSU"
+          elif [[ ${{ inputs.ksu_type }} == "bakasu" ]]; then
+            KSU_TYPENAME="BakaSU"
           elif [[ ${{ inputs.ksu_type }} == "ksunext" ]]; then
             KSU_TYPENAME="KSUNext"
           elif [[ ${{ inputs.ksu_type }} == "ksu" ]]; then
@@ -708,7 +737,12 @@ jobs:
             cp "$GITHUB_WORKSPACE/zram.zip" .
           fi
           if [[ ${{ inputs.kpm_enable }} == 'true' ]]; then
-            wget https://github.com/cctv18/KPatch-Next/releases/latest/download/kpn.zip
+            wget -q --tries 3 --timeout 60 -O kpn.zip https://github.com/cctv18/KPatch-Next/releases/latest/download/kpn.zip || { echo "::error::kpn.zip 下载失败"; exit 1; }
+            echo "已内置 kpn.zip（KPatch Next 独立 KPM 模块）"
+          fi
+          if [[ ${{ inputs.use_nomount }} == 'true' ]]; then
+            cp "$GITHUB_WORKSPACE/NoMount-429-016375c.zip" nomount.zip || { echo "::error::nomount.zip 复制失败"; exit 1; }
+            echo "已内置 nomount.zip（NoMount 挂载元模块 429 版，与内核侧 016375cd 配对）"
           fi
           if [[ -n "${{ inputs.kernel_suffix }}" ]]; then
             AK3_NAME=AnyKernel3_${KSU_TYPENAME}_${{ env.KSUVER }}_${{ env.KERNEL_VERSION }}_${{ inputs.kernel_suffix }}.zip
@@ -733,6 +767,7 @@ jobs:
           archive: false
 
   release:
+    if: ${{ inputs.auto_release == true }}
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -767,8 +802,8 @@ jobs:
           echo "TAG_HEAD=$TAG_HEAD" >> $GITHUB_ENV
           if [[ ${{ inputs.ksu_type }} == "sukisu" ]]; then
             KSU_TYPENAME="SukiSU Ultra"
-          elif [[ ${{ inputs.ksu_type }} == "resukisu" ]]; then
-            KSU_TYPENAME="ReSukiSU"
+          elif [[ ${{ inputs.ksu_type }} == "bakasu" ]]; then
+            KSU_TYPENAME="BakaSU"
           elif [[ ${{ inputs.ksu_type }} == "ksunext" ]]; then
             KSU_TYPENAME="KernelSU Next"
           elif [[ ${{ inputs.ksu_type }} == "ksu" ]]; then

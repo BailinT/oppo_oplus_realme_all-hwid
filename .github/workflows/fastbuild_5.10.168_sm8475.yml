@@ -1,12 +1,16 @@
-name: 6.12.58 欧加真OKI内核快速构建
+# ============================================================
+# 源: OnePlusOSS/android_kernel_common_oneplus_sm8475 @ oneplus/sm8475_u_14.0.0_oneplus_11r_5g (实测 Makefile = 5.10.209)
+# 首跑按「同芯片最新分支」; 其他芯片同 x 变体后续按需扩展
+# ============================================================
+name: 5.10.168_sm8475 欧加真OKI内核快速构建(sm8475)
 
 env:
   TZ: Asia/Shanghai
-  ANDROID_VERSION: 'android16'
-  KERNEL_VERSION: '6.12'
-  SUB_VERSION: '58'
-  KERNEL_NAME: 'android16-5-g8c67d4274c0a-ab14275539-4k'
-  CCACHE_KEY: ccache-ecsv4-6.12.58-hwid
+  ANDROID_VERSION: 'android12'
+  KERNEL_VERSION: '5.10'
+  SUB_VERSION: '168_sm8475'
+  KERNEL_NAME: 'android12-9-00002-g5.10.168'
+  CCACHE_KEY: ccache-ecsv4-5.10.168_sm8475-hwid
 
 on:
   workflow_call:
@@ -32,22 +36,17 @@ on:
         type: boolean
         default: true
       lz4_enable:
-        description: '是否安装 lz4 1.10.0+zstd 1.5.7 补丁'
+        description: '是否安装 lz4 1.10.0+zstd 1.5.7 补丁(5.10适配性未验证,建议关闭)'
         required: true
         type: boolean
-        default: true
+        default: false
       lz4kd_enable:
         description: '是否安装 LZ4KD 补丁(若已开启lz4+zstd补丁则可不开启)'
         required: true
         type: boolean
         default: false
       bbr_enable:
-        description: "是否启用bbr算法(优化上行数据,对手机日用无太大意义甚至可能负优化;false关闭,true仅加入算法,default启用算法并设为默认)"
-        required: true
-        type: string
-        default: 'false'
-      droidspaces_enable:
-        description: '是否启用Droidspaces容器支持(轻量化的完整Linux容器支持;false关闭,standard开启容器+ntsync支持,extend开启更多测试支持项)'
+        description: '是否启用bbr算法(优化上行数据,对手机日用无太大意义甚至可能负优化;false关闭,true仅加入算法,default设为默认)'
         required: true
         type: string
         default: 'false'
@@ -56,8 +55,8 @@ on:
         required: true
         type: boolean
         default: false
-      adios_enable:
-        description: '是否启用ADIOS IO调度器支持(提升IO读写性能)'
+      ssg_enable:
+        description: '是否启用三星SSG IO调度器支持(提升IO读写性能; 部分机型开启后可能导致bug)'
         required: true
         type: boolean
         default: true
@@ -67,10 +66,10 @@ on:
         type: boolean
         default: false
       baseband_guard:
-        description: '是否开启内核级基带保护(阻止一切对非用户分区的写入，有效防止格机)'
+        description: '是否开启内核级基带保护(阻止一切对非用户分区的写入，有效防止格机;5.10适配性未验证,建议先关闭)'
         required: true
         type: boolean
-        default: true
+        default: false
       ccache_update:
         description: '更新ccache缓存(将本次编译生成的ccache缓存覆盖至仓库缓存，在更改编译配置、源码或需要刷新缓存时开启)'
         required: true
@@ -100,7 +99,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: 安装环境依赖+初始化源码仓库及llvm-clang19工具链
+      - name: 安装环境依赖+初始化源码仓库及llvm-Clang20工具链
         run: |
           rm -rf kernel_workspace
           mkdir kernel_workspace
@@ -113,42 +112,67 @@ jobs:
           sudo apt purge man-db &&
           sudo rm -rf /var/lib/man-db/auto-update &&
           sudo apt update &&
-          sudo apt-get install -y --no-install-recommends binutils python-is-python3 libssl-dev libelf-dev libdw-dev &
+          # 5.10(KMI gen9) era arm64 uses -fno-integrated-as, needs aarch64 cross GNU assembler
+          sudo apt-get install -y --no-install-recommends binutils binutils-aarch64-linux-gnu python-is-python3 libssl-dev libelf-dev &
           #旧版完整指令：（由于经过验证大部分指令已内置于GitHub Action环境中，故进行精简）
-          #sudo apt-get install -y --no-install-recommends curl bison flex make binutils git perl gcc python3 python-is-python3 bc libssl-dev libelf-dev libdw-dev zip unzip ccache
+          #sudo apt-get install -y --no-install-recommends curl bison flex make binutils git perl gcc python3 python-is-python3 bc libssl-dev libelf-dev zip unzip ccache
           
-          #使用最新版ccache v4.12.2（Ubuntu软件仓库的版本并非最新）
+          #使用最新版ccache-ECS（特化优化内核编译缓存，大幅提升二次不同配置编译速度）
           cp "$GITHUB_WORKSPACE/lib/ccache-x86-64" ccache &&
           sudo cp -f ./ccache /usr/bin/ccache &&
           sudo chmod +x /usr/bin/ccache &&
           rm -f ./ccache &
           
           echo "正在克隆源码仓库..."
-          aria2c -s16 -x16 -k1M https://github.com/cctv18/android_kernel_common_oneplus_sm8850/archive/refs/heads/oneplus/sm8850_b_16.0_pad_3_pro.zip -o common.zip && 
+          aria2c -s16 -x16 -k1M https://github.com/OnePlusOSS/android_kernel_oneplus_sm8475/archive/refs/heads/oneplus/sm8475_u_14.0.0_oneplus_ace_pro.zip -o common.zip && 
           unzip -q common.zip && 
-          mv "android_kernel_common_oneplus_sm8850-oneplus-sm8850_b_16.0_pad_3_pro" common &&
+          mv "android_kernel_oneplus_sm8475-oneplus-sm8475_u_14.0.0_oneplus_ace_pro" common &&
           rm -rf common.zip &
           
-          echo "正在克隆llvm-clang19工具链..." &&
-          mkdir -p clang19 &&
-          aria2c -s16 -x16 -k1M https://github.com/cctv18/oneplus_sm8650_toolchain/releases/download/LLVM-Clang19-r536225/clang-r536225.zip -o clang.zip &&
-          unzip -q clang.zip -d clang19 &&
+          echo "正在克隆设备树仓库(用于修复官方common仓的死链)..."
+          aria2c -s16 -x16 -k1M https://github.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_sm8475/archive/refs/heads/oneplus/sm8475_u_14.0.0_oneplus_ace_pro.zip -o devicetree.zip &&
+          unzip -q devicetree.zip &&
+          mv "android_kernel_modules_and_devicetree_oneplus_sm8475-oneplus-sm8475_u_14.0.0_oneplus_ace_pro" devicetree &&
+          rm -rf devicetree.zip &
+          
+          echo "正在克隆llvm-Clang20工具链..." &&
+          mkdir -p clang20 &&
+          aria2c -s16 -x16 -k1M https://github.com/cctv18/oneplus_sm8650_toolchain/releases/download/LLVM-Clang20-r547379/clang-r547379.zip -o clang.zip &&
+          unzip -q clang.zip -d clang20 &&
           rm -rf clang.zip &
           
-          echo "正在克隆Rust 1.82.0工具链..." &&
-          mkdir -p rust &&
-          aria2c -s16 -x16 -k1M https://github.com/cctv18/oneplus_sm8650_toolchain/releases/download/LLVM-Clang19-r536225/rust.zip -o rust.zip &&
-          unzip -q rust.zip -d rust &&
-          rm -rf rust.zip &
-          
           echo "正在克隆构建工具..." &&
-          aria2c -s16 -x16 -k1M https://github.com/cctv18/oneplus_sm8650_toolchain/releases/download/LLVM-Clang19-r536225/build-tools.zip -o build-tools.zip &&
+          aria2c -s16 -x16 -k1M https://github.com/cctv18/oneplus_sm8650_toolchain/releases/download/LLVM-Clang20-r547379/build-tools.zip -o build-tools.zip &&
           unzip -q build-tools.zip &&
           rm -rf build-tools.zip &
           
           wait
-          echo "所有源码及llvm-clang19工具链初始化完成！"
-          echo "正在去除 dirty 后缀..."
+          echo "所有源码及llvm-Clang20工具链初始化完成！"
+          echo "正在修复官方 common 仓的死链(软链指向未开源的vendor目录)..."
+          # drivers/soc/Makefile 引用 obj-y += oplus/storage/，官方仓此路径是指向 vendor 的死链，用设备树仓的真实文件替换
+          if [ -d devicetree/vendor/oplus/kernel/storage ]; then
+            rm -f common/drivers/soc/oplus/storage
+            cp -r devicetree/vendor/oplus/kernel/storage common/drivers/soc/oplus/storage
+          else
+            echo "devicetree 仓无 storage 替换源, 跳过"
+          fi
+          # init/Kconfig 引用 source "kernel/oplus_cpu/sched/Kconfig"，官方仓 kernel/oplus_cpu 是死链，用设备树仓的 cpu 目录替换
+          if [ -d devicetree/vendor/oplus/kernel/cpu ]; then
+            rm -f common/kernel/oplus_cpu
+            cp -r devicetree/vendor/oplus/kernel/cpu common/kernel/oplus_cpu
+          else
+            echo "devicetree 仓无 cpu 替换源, 跳过"
+          fi
+          # 通用 vendor 死链修复(单仓 12.1/13.x 老世代 67 处链接): 遍历补源, 留死链即失败
+          cp "$GITHUB_WORKSPACE/scripts/fix_vendor_symlinks.py" /tmp/fix_vendor_symlinks.py
+          python3 /tmp/fix_vendor_symlinks.py --tree common --modules devicetree --allow-missing "touchscreen/synaptics_thp"
+          # 修复 ABI 符号列表死链(build.config.gki.aarch64 的 ADDITIONAL_KMI_SYMBOL_LISTS 引用)
+          curl -sL --max-time 30 "https://raw.githubusercontent.com/oppo-source/android_kernel_common_oppo_sm8475/oppo/sm8475_v_15.0.0_find_n2/android/abi_gki_aarch64_oplus_internal" -o common/android/abi_gki_aarch64_oplus_internal || true
+          # 清理源码里的残留死链软链(build.config.msm.* 指向 msm-kernel 仓, gki_defconfig 编译不需要; 断链文件留着不碍事, 但删除以防 Kbuild 扫描)
+          rm -f common/build.config.msm.lahaina common/build.config.msm.waipio common/build.config.msm.waipio.tuivm || true
+          echo "死链修复完成！"
+          echo "正在去除 ABI 保护 & 去除 dirty 后缀..."
+          rm common/android/abi_gki_protected_exports_* || true
           for f in common/scripts/setlocalversion; do
             sed -i 's/ -dirty//g' "$f"
             sed -i '$i res=$(echo "$res" | sed '\''s/-dirty//g'\'')' "$f"
@@ -171,11 +195,7 @@ jobs:
           echo "当前磁盘空间："
           df -h
           echo "当前构建内核版本：${{ env.KERNEL_VERSION }}.${{ env.SUB_VERSION }}"
-          if [[ "${{ inputs.droidspaces_enable }}" != "false" ]]; then
-            CCACHE_REAL_KEY=${{ env.CCACHE_KEY }}-Droidspaces
-          else
-            CCACHE_REAL_KEY=${{ env.CCACHE_KEY }}-none
-          fi
+          CCACHE_REAL_KEY=${{ env.CCACHE_KEY }}-none
           echo "CCACHE_REAL_KEY=$CCACHE_REAL_KEY" >> $GITHUB_ENV
 
       - name: 载入当前版本内核的 ccache缓存
@@ -200,11 +220,7 @@ jobs:
           
           echo "未命中缓存，尝试拉取最新公共 ccache ..."
           mkdir -p ${{ env.CCACHE_DIR }}
-          if [[ "${{ inputs.droidspaces_enable }}" != "false" ]]; then
-            FILE_NAME="ccache-${{ env.KERNEL_VERSION }}.${{ env.SUB_VERSION }}-Droidspaces.tar.zst"
-          else
-            FILE_NAME="ccache-${{ env.KERNEL_VERSION }}.${{ env.SUB_VERSION }}.tar.zst"
-          fi
+          FILE_NAME="ccache-${{ env.KERNEL_VERSION }}.${{ env.SUB_VERSION }}.tar.zst"
           
           if gh release download -p "$FILE_NAME" -R cctv18/public_ccache; then
             echo "成功下载 $FILE_NAME，正在解压..."
@@ -301,13 +317,61 @@ jobs:
         run: |
           cd kernel_workspace
           if [[ ${{ inputs.ksu_type }} != "none" ]]; then
-            echo "正在添加susfs补丁..."
-            git clone --depth=1 https://github.com/cctv18/susfs4oki.git susfs4ksu -b oki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}
+            echo "正在添加susfs补丁(5.10使用ShirkNeko/susfs4ksu的gki-android12-5.10分支)..."
+            git clone --depth=1 https://github.com/ShirkNeko/susfs4ksu.git susfs4ksu -b gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}
             cp ./susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch ./common/
             cp ./susfs4ksu/kernel_patches/fs/* ./common/fs/
             cp ./susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
             cd ./common
             patch -p1 -F 3 < 50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch || true
+            # 修复 ShirkNeko 5.10 补丁缺陷: statfs.c:88 的调用先于 extern 声明(声明在同文件后面的 hunk), 把声明补进 susfs_def.h include 之后
+            sed -i 's|#include <linux/susfs_def.h>|#include <linux/susfs_def.h>\n#ifdef CONFIG_KSU_SUSFS_SUS_KSTAT\nextern int susfs_sus_kstat_spoof_vfs_statfs(struct inode *inode, struct kstatfs *buf, bool *is_fuse);\n#endif|' fs/statfs.c
+            # 修复 ShirkNeko 5.10 susfs.c 缺 <linux/security.h> include(284 行调用 security_sb_statfs, sm8475 树无传递包含; CONFIG_SECURITY=y 走声明/n 走内联 stub, 补 include 两态皆可用)
+            sed -i 's|#include <linux/fs.h>|#include <linux/fs.h>\n#include <linux/security.h>|' fs/susfs.c
+            # 修复 ShirkNeko 5.x 补丁从高版本内核抄的 hunk: task_mmu.c 调 VMA_PAD_START(补丁无定义; 新代际树自带宏, 老树无)
+            if grep -q "VMA_PAD_START(vma)" fs/proc/task_mmu.c && ! grep -rq "define VMA_PAD_START" include/; then
+              sed -i 's|end = VMA_PAD_START(vma);|end = vma->vm_end;|' fs/proc/task_mmu.c
+              echo "已修复 task_mmu.c 的 VMA_PAD_START(改用 vma->vm_end)"
+            fi
+            # 老基树补 inotify_mark_user_mask(susfs fdinfo hunk 依赖; 新代际树自带) -> 移植 static inline
+            if grep -q "inotify_mark_user_mask" fs/notify/fdinfo.c && ! grep -q "inotify_mark_user_mask" fs/notify/inotify/inotify.h; then
+              cp "$GITHUB_WORKSPACE/scripts/fix_inotify_user_mask.py" /tmp/fix_inotify.py
+              python3 /tmp/fix_inotify.py --header fs/notify/inotify/inotify.h
+              grep -q "inotify_mark_user_mask" fs/notify/inotify/inotify.h || { echo "::error::inotify_mark_user_mask 移植失败"; exit 1; }
+            fi
+            # OEM 调试残渣: thermal_core.c 把 int 成员传给 dev_err(&tz->temperature)(clang12 不报, clang20 -Werror 报) -> 删该行
+            if grep -q 'dev_err(&tz->temperature' drivers/thermal/thermal_core.c; then
+              sed -i '/dev_err(&tz->temperature/ {N;N;d}' drivers/thermal/thermal_core.c
+              grep -q 'dev_err(&tz->temperature' drivers/thermal/thermal_core.c && { echo "::error::thermal_core 调试残渣清理失败"; exit 1; } || echo "已清理 thermal_core 调试残渣"
+                # thermal_sysfs.c 的 kvzalloc/kvfree 隐式声明(缺 mm.h include, 原厂 clang12 宽容) -> 补 include
+              # 老基树 binder_alloc.c 调 mmget_still_valid(5.10.81 OEM 树无此函数) -> 恒假替换(语义=mm 永远有效)
+
+
+            fi
+            # 补源的 sensor devinfo 依赖私有符号(qcom_smem/get_project, 原厂在 vendor 侧) -> 关闭编入
+            if [ -d drivers/soc/oplus/sensor ]; then
+            grep -q "CONFIG_OPLUS_FEATURE_SENSOR_CFG" arch/arm64/configs/gki_defconfig || echo "# CONFIG_OPLUS_FEATURE_SENSOR_CFG is not set" >> arch/arm64/configs/gki_defconfig
+            echo "已关闭 OPLUS_FEATURE_SENSOR_CFG(sensor devinfo 依赖 vendor 私有符号)"
+            fi
+
+
+            if grep -q 'mmget_still_valid' drivers/android/binder_alloc.c 2>/dev/null; then
+            sed -i 's|if (!mmget_still_valid(mm)) {|if (0) {|' drivers/android/binder_alloc.c
+            grep -q 'mmget_still_valid' drivers/android/binder_alloc.c && { echo "::error::binder_alloc mmget_still_valid 处理失败"; exit 1; } || echo "已处理 binder_alloc mmget_still_valid"
+            fi
+            if grep -q 'kvzalloc' drivers/thermal/thermal_sysfs.c && ! grep -q '#include <linux/mm.h>' drivers/thermal/thermal_sysfs.c; then
+            sed -i '/#include <linux\/slab.h>/a #include <linux\/mm.h>' drivers/thermal/thermal_sysfs.c
+            grep -q '#include <linux/mm.h>' drivers/thermal/thermal_sysfs.c || { echo '::error::thermal_sysfs mm.h 补丁失败'; exit 1; }
+            # OEM 同步失误: ace 系树 mm/vmscan.c 缺 bool scan_adjusted 声明(11r 树有) -> 脚本条件补
+            if grep -q 'scan_adjusted' mm/vmscan.c && ! grep -q 'bool scan_adjusted;' mm/vmscan.c; then
+            cp "$GITHUB_WORKSPACE/scripts/fix_vmscan_scan_adjusted.py" /tmp/fix_vmscan.py
+            python3 /tmp/fix_vmscan.py
+            echo "=== vmscan 诊断 ==="
+            grep -n 'proportional_reclaim' mm/vmscan.c || echo "!! proportional_reclaim 缺失"
+            grep -n 'scan_adjusted' mm/vmscan.c | head -5 || true
+            grep -q 'bool scan_adjusted;' mm/vmscan.c || { echo '::error::vmscan scan_adjusted 声明补丁失败'; exit 1; }
+            fi
+            fi
             cd ..
           else
             echo "已选择无内置KernelSU模式，跳过susfs配置..."
@@ -326,21 +390,28 @@ jobs:
           cd kernel_workspace
           mkdir -p "$GITHUB_ACTOR"
           cp -r "$GITHUB_WORKSPACE/zram_patch" "$GITHUB_ACTOR/"
-          cp ./$GITHUB_ACTOR/zram_patch/6.12/001-lz4.patch ./common/
-          cp ./$GITHUB_ACTOR/zram_patch/6.12/002-zstd.patch ./common/
+          cp ./$GITHUB_ACTOR/zram_patch/001-lz4.patch ./common/
+          cp ./$GITHUB_ACTOR/zram_patch/lz4armv8.S ./common/lib
+          cp ./$GITHUB_ACTOR/zram_patch/002-zstd.patch ./common/
           cd ./common
-          patch -p1 -F 3 --forward < 001-lz4.patch || true
-          patch -p1 -F 3 --forward < 002-zstd.patch || true
+          git apply -p1 < 001-lz4.patch || true
+          patch -p1 -F 3 < 002-zstd.patch || true
           [ -f "$GITHUB_WORKSPACE/kernel_workspace/common/lib/zstd/common/portability_macros.h" ] || cp "$GITHUB_WORKSPACE/scripts/zstd_portability_macros.h" $GITHUB_WORKSPACE/kernel_workspace/common/lib/zstd/common/portability_macros.h
-          rm -f $GITHUB_WORKSPACE/kernel_workspace/common/fs/f2fs/*.rej # f2fs-compress 已在预修树, GNU patch 对已应用跳过 hunk 仍存 spurious .rej
 
       - name: 应用 lz4kd 补丁
         if: inputs.lz4kd_enable
         run: |
           echo "正在添加lz4kd补丁…"
-          cd kernel_workspace/common
-          cp "$GITHUB_WORKSPACE/other_patch/lz4kd.patch" .
-          patch -p1 -F 3 --forward < lz4kd.patch || true
+          cd kernel_workspace
+          if [ ! -d "SukiSU_patch" ]; then
+            git clone --depth=1 https://github.com/ShirkNeko/SukiSU_patch.git
+          fi
+          cd common
+          cp -r ../SukiSU_patch/other/zram/lz4k/include/linux/* ./include/linux/
+          cp -r ../SukiSU_patch/other/zram/lz4k/lib/* ./lib
+          cp -r ../SukiSU_patch/other/zram/lz4k/crypto/* ./crypto
+          cp ../SukiSU_patch/other/zram/zram_patch/${{ env.KERNEL_VERSION }}/lz4kd.patch ./
+          patch -p1 -F 3 < lz4kd.patch || true
           
       - name: 添加SUSFS 配置项
         if: inputs.susfs_enable
@@ -369,42 +440,33 @@ jobs:
           if [[ "${{ inputs.susfs_enable }}" == "false" ]]; then
             echo "CONFIG_KSU_SUSFS=n" >> ./common/arch/arm64/configs/gki_defconfig
           fi
-          # 添加对 Mountify (backslashxx/mountify) 模块的支持
+          #添加对 Mountify (backslashxx/mountify) 模块的支持
           echo "CONFIG_TMPFS_XATTR=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_TMPFS_POSIX_ACL=y" >> ./common/arch/arm64/configs/gki_defconfig
-          if [[ "${{ inputs.lz4kd_enable }}" == "true" ]]; then
+          if [[ ${{ inputs.lz4kd_enable }} == 'true' ]]; then
             echo "CONFIG_ZSMALLOC=y" >> ./common/arch/arm64/configs/gki_defconfig
             echo "CONFIG_CRYPTO_LZ4HC=y" >> ./common/arch/arm64/configs/gki_defconfig
             echo "CONFIG_CRYPTO_LZ4K=y" >> ./common/arch/arm64/configs/gki_defconfig
             echo "CONFIG_CRYPTO_LZ4KD=y" >> ./common/arch/arm64/configs/gki_defconfig
             echo "CONFIG_CRYPTO_842=y" >> ./common/arch/arm64/configs/gki_defconfig
-            #以下配置选项用于编译zram模块，开启与否不影响内核编译
-            echo "CONFIG_ZRAM_BACKEND_LZ4HC=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_ZRAM_BACKEND_LZ4K=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_ZRAM_BACKEND_LZ4KD=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_ZRAM_BACKEND_842=y" >> ./common/arch/arm64/configs/gki_defconfig
           fi
           # 开启O2编译优化配置
           echo "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # 禁用 defconfig 检查
+          #禁用 defconfig 检查
           sed -i 's/check_defconfig//' ./common/build.config.gki
           #跳过将uapi标准头安装到 usr/include 目录的不必要操作，节省编译时间
           echo "CONFIG_HEADERS_INSTALL=n" >> ./common/arch/arm64/configs/gki_defconfig
           # IKCONFIG 内容脱敏: /proc/config.gz 嵌入配置过滤 CONFIG_KSU/KernelSU/SUSFS/NOMOUNT 行(2026-09-24 防泄露; 文件与权限不动)
           cp "$GITHUB_WORKSPACE/other_patch/ikconfig_sanitize-6.1.patch" ./common/ikconfig_sanitize.patch
           ( cd ./common && patch -p1 -F 3 < ikconfig_sanitize.patch )
-          # 6.12内核Rust配置
-          echo "CONFIG_RUST=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_ANDROID_BINDER_IPC_RUST=m" >> ./common/arch/arm64/configs/gki_defconfig
-          # 应用 CVE_2026_43499 修复补丁
-          cd common
-          cp "$GITHUB_WORKSPACE/other_patch/cve-2026-43499-rtmutex-6.12.patch" .
-          patch -p1 -F 3 < cve-2026-43499-rtmutex-6.12.patch
-          
+          # (5.10 不应用 cve-2026-43499-rtmutex 补丁, 该补丁为 6.1 专用)
+
       - name: 启用网络功能增强优化配置
         if: inputs.better_net
         run: |
           cd kernel_workspace
+          #启用  BPF 流解析器,实现高性能网络流量处理,增强网络监控和分析能力
+          echo "CONFIG_BPF_STREAM_PARSER=y" >> ./common/arch/arm64/configs/gki_defconfig
           #开启增强 Netfilter 防火墙扩展模块,支持基于地址类型的匹配规则,启用 IP 集合支持,提高防火墙规则灵活性,支持更复杂的流量过滤策略
           echo "CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_NETFILTER_XT_SET=y" >> ./common/arch/arm64/configs/gki_defconfig
@@ -475,62 +537,15 @@ jobs:
             fi
           fi
 
-      - name: 启用 Droidspaces 容器支持
-        run: |
-          if [[ "${{ inputs.droidspaces_enable }}" != "false" ]]; then
-            echo "正在启用 Droidspaces 容器支持..."
-            cd kernel_workspace/common
-            # 应用 Droidspaces 容器必须补丁
-            cp "$GITHUB_WORKSPACE/droidspaces_patch/fix_sysvipc_kabi_a16-6.12.patch" .
-            patch -p1 -F 3 < fix_sysvipc_kabi_a16-6.12.patch || true
-            # 修补 oplus_bsp_midas 行为，避免开机崩溃
-            cp "$GITHUB_WORKSPACE/droidspaces_patch/fix_oplus_bsp_midas.patch" .
-            patch -p1 -F 3 < fix_oplus_bsp_midas.patch || true
-            # 修补 oplus_bsp_sched_assist 数组越界访问导致的运行随机崩溃
-            cp "$GITHUB_WORKSPACE/droidspaces_patch/ddl_hit_hook.patch" .
-            patch -p1 -F 3 < ddl_hit_hook.patch || true
-            # 应用 NTSync 补丁
-            cp "$GITHUB_WORKSPACE/droidspaces_patch/ntsync_compat_${{" . env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch
-            patch -p1 -F 3 < ntsync_compat_${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch || true
-            # 开启 Droidspaces 容器所需内核支持
-            echo "CONFIG_PID_NS=y" >> ./arch/arm64/configs/gki_defconfig
-            echo "CONFIG_IPC_NS=y" >> ./arch/arm64/configs/gki_defconfig
-            echo "CONFIG_USER_NS=y" >> ./arch/arm64/configs/gki_defconfig
-            echo "CONFIG_SYSVIPC=y" >> ./arch/arm64/configs/gki_defconfig
-            echo "CONFIG_DEVTMPFS=y" >> ./arch/arm64/configs/gki_defconfig
-            echo "CONFIG_NAMESPACES=y" >> ./arch/arm64/configs/gki_defconfig
-            echo "CONFIG_POSIX_MQUEUE=y" >> ./arch/arm64/configs/gki_defconfig
-            echo "CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=y" >> ./arch/arm64/configs/gki_defconfig
-            echo "CONFIG_NETFILTER_XT_TARGET_LOG=y" >> ./arch/arm64/configs/gki_defconfig
-            echo "CONFIG_NETFILTER_XT_MATCH_RECENT=y" >> ./arch/arm64/configs/gki_defconfig
-            # 未经测试的配置选项，可能导致bug
-            #echo "CONFIG_CGROUP_DEVICE=y" >> ./arch/arm64/configs/gki_defconfig
-            #echo "CONFIG_CGROUP_PIDS=y" >> ./arch/arm64/configs/gki_defconfig
-            #echo "CONFIG_FW_LOADER_COMPRESS=y" >> ./arch/arm64/configs/gki_defconfig
-            #echo "CONFIG_BRIDGE_NETFILTER=y" >> ./arch/arm64/configs/gki_defconfig
-            #echo "CONFIG_NF_TABLES=y" >> ./arch/arm64/configs/gki_defconfig
-            # 开启 NTSync
-            echo "CONFIG_NTSYNC=y" >> ./arch/arm64/configs/gki_defconfig
-            if [[ "${{ inputs.droidspaces_enable }}" == "extend" ]]; then
-              echo "正在启用容器环境扩展支持..."
-              # 开启虚拟 HCI 设备支持
-              echo "CONFIG_BT_HCIVHCI=y" >> ./arch/arm64/configs/gki_defconfig
-              # 开启 systemd-coredump 支持
-              echo "CONFIG_STATIC_USERMODEHELPER=n" >> ./arch/arm64/configs/gki_defconfig
-              # 添加 Lindroid EVDI DRM 驱动
-              # wget https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/${{ env.KERNEL_VERSION }}/droidspaces_patch/evdi_drm.patch
-              # patch -p1 -F 3 < evdi_drm.patch || true
-              # echo "CONFIG_DRM_LINDROID_EVDI=y" >> ./arch/arm64/configs/gki_defconfig
-            fi
-          fi
+      # (Droidspaces 容器支持: ntsync 为 6.6+ 特性, 5.10 不适用, 已移除)
 
-      - name: 启用ADIOS IO调度器
-        if: inputs.adios_enable
+      - name: 启用三星SSG IO调度器
+        if: inputs.ssg_enable
         run: |
-          echo "正在启用ADIOS IO调度器(将截止时间优先调度算法与基于自主学习的自适应延迟控制算法相结合, 降低I/O延迟)…"
+          echo "正在启用三星SSG IO调度器(极少数机型开启后可能不开机,若出现bug请关闭此项)…"
           cd kernel_workspace
-          echo "CONFIG_MQ_IOSCHED_ADIOS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_MQ_IOSCHED_DEFAULT_ADIOS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_MQ_IOSCHED_SSG=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_MQ_IOSCHED_SSG_CGROUP=y" >> ./common/arch/arm64/configs/gki_defconfig
 
       - name: 启用Re-Kernel支持
         if: inputs.rekernel_enable
@@ -538,7 +553,6 @@ jobs:
           echo "正在启用Re-Kernel支持(用于与Freezer,NoActive等软件配合使用,提升冻结后台能力)…"
           cd kernel_workspace
           echo "CONFIG_REKERNEL=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_REKERNEL_NETWORK=y" >> ./common/arch/arm64/configs/gki_defconfig
 
       - name: 启用内核级基带保护
         if: inputs.baseband_guard
@@ -559,34 +573,25 @@ jobs:
             for f in ./common/scripts/setlocalversion; do
               sed -i "\$s|echo \"\\\$res\"|echo \"-${{ inputs.kernel_suffix }}\"|" "$f"
             done
-            sudo sed -i 's/-4k/-${{ inputs.KERNEL_SUFFIX }}/g' ./common/arch/arm64/configs/gki_defconfig
           else
             echo "当前内核版本后缀：${{ env.KERNEL_NAME }}"
             for f in ./common/scripts/setlocalversion; do
               sed -i "\$s|echo \"\\\$res\"|echo \"-${{ env.KERNEL_NAME }}\"|" "$f"
             done
-            sudo sed -i 's/-4k/-${{ env.KERNEL_NAME }}/g' ./common/arch/arm64/configs/gki_defconfig
           fi
-          sed -i 's/${scm_version}//' ./common/scripts/setlocalversion
-          echo "CONFIG_LOCALVERSION_AUTO=n" >> ./common/arch/arm64/configs/gki_defconfig
            
       - name: 构建内核
         run: |
           WORKDIR="$(pwd)"
           export PATH="/usr/lib/ccache:$PATH"
-          export PATH="$WORKDIR/kernel_workspace/clang19/bin:$PATH"
+          export PATH="$WORKDIR/kernel_workspace/clang20/bin:$PATH"
           export PATH="$WORKDIR/kernel_workspace/build-tools/bin:$PATH"
-          export PATH="$WORKDIR/kernel_workspace/rust/bin:$PATH"
-          export CLANG_DIR="$WORKDIR/kernel_workspace/clang19/bin"
+          CLANG_DIR="$WORKDIR/kernel_workspace/clang20/bin"
           CLANG_VERSION="$($CLANG_DIR/clang --version | head -n 1)"
           LLD_VERSION="$($CLANG_DIR/ld.lld --version | head -n 1)"
-          RUSTC_VERSION="$(rustc -V 2>/dev/null | head -n1)"
-          BINDGEN_VERSION="$(bindgen --version 2>/dev/null | head -n1)"
           echo "编译器信息:"
           echo "Clang版本: $CLANG_VERSION"
           echo "LLD版本: $LLD_VERSION"
-          echo "Rustc版本: $RUSTC_VERSION"
-          echo "Bindgen版本: $BINDGEN_VERSION"
           pahole_version=$(pahole --version 2>/dev/null | head -n1); [ -z "$pahole_version" ] && echo "pahole版本：未安装" || echo "pahole版本：$pahole_version"
           
           export CCACHE_LOGFILE="${{ github.workspace }}/kernel_workspace/ccache.log"
@@ -609,13 +614,12 @@ jobs:
           echo "FAKETIME=$FAKETIME" >> $GITHUB_ENV
           SO_DIR=$(pwd)
           export PRELOAD_LIBS="$SO_DIR/libfakestat.so $SO_DIR/libfaketimeMT.so"
-          export REAL_CLANG_PATH="$WORKDIR/kernel_workspace/clang19/bin/clang"
           #创建 CC (编译器) 包装器
           echo '#!/bin/bash' > cc-wrapper
           echo 'export LD_PRELOAD="'$PRELOAD_LIBS'"' >> cc-wrapper
           echo 'export FAKESTAT="'$FAKESTAT'"' >> cc-wrapper
           echo 'export FAKETIME="'$FAKETIME'"' >> cc-wrapper
-          echo 'ccache $REAL_CLANG_PATH "$@"' >> cc-wrapper
+          echo 'ccache clang "$@"' >> cc-wrapper
           #创建 LD (链接器) 包装器
           echo '#!/bin/bash' > ld-wrapper
           echo 'export LD_PRELOAD="'$PRELOAD_LIBS'"' >> ld-wrapper
@@ -642,43 +646,13 @@ jobs:
           echo "--- 编译前环境文件时间戳: ---"
           LD_PRELOAD=$PRELOAD_LIBS stat ./Makefile
           
-          # 6.12内核make编译核心配置：
-          # 1. 重映射物理路径 (由于6.12内核引入了Rust代码，计算内核符号版本的工具变成了gendwarfksyms，而gendwarfksyms无法正确预处理绝对路径，故我们需要手动把绝对路径重映射为相对路径，否则内核符号校验值会大面积出错)
-          COMMON_REAL_PATH=$(pwd -P)
-          ROOT_REAL_PATH=$(dirname "$COMMON_REAL_PATH")
-          KCFLAGS+=" -fdebug-prefix-map=$ROOT_REAL_PATH=."
-          KCFLAGS+=" -fmacro-prefix-map=$ROOT_REAL_PATH=."
-          KCFLAGS+=" -ffile-prefix-map=$ROOT_REAL_PATH=."
-          # 2. 声明Rust等工具（此处若不进行声明，内核编译前的Rust环境预检测脚本scripts/rust_is_available.sh会检测失败，导致内核无法正常开启Rust代码编译）
-          export RUSTC="rustc"
-          export BINDGEN="bindgen"
-          export CC="clang"
-          export LIBCLANG_PATH="$WORKDIR/kernel_workspace/clang19/lib"
-          # 3. 配置KCFLAGS
-          KCFLAGS+=" -no-canonical-prefixes"
-          KCFLAGS+=" -O2"
-          KCFLAGS+=" -pipe"
-          KCFLAGS+=" -Wno-error"
-          KCFLAGS+=" -fno-stack-protector"
-          KCFLAGS+=" -D__ANDROID_COMMON_KERNEL__"
-          export KCFLAGS
-          # 4. 配置其他工具及选项（非必须，防错冗余）
-          export HOSTCC=clang
-          export LD="ld.lld"
-          export HOSTLD=ld.lld
-          export LLVM=1 LLVM_IAS=1
-          export ARCH=arm64 SUBARCH=arm64
-          export CROSS_COMPILE=aarch64-linux-gnu-
-          export LD=ld.lld HOSTLD=ld.lld AR=llvm-ar NM=llvm-nm AS=clang READELF=llvm-readelf
-          export OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump OBJSIZE=llvm-size STRIP=llvm-strip
-          # 5. 编译前运行官方环境配置脚本
-          source "./_setup_env.sh" 2>/dev/null || true
-          
           #在构建内核的同时清除不必要的.NET, Android NDK, Haskell, CodeQL运行库，清理空间且不阻塞后续步骤运行
           sudo rm -rf /usr/share/dotnet &
           sudo rm -rf /usr/local/lib/android &
           sudo rm -rf /opt/ghc &
           sudo rm -rf /opt/hostedtoolcache/CodeQL &
+          # 注意: bash set -e 对 && 链前半段失败会豁免(模板原写法 defconfig 失败步骤仍假成功), 改为显式处理
+          # 通用自愈: 部分树的 Kconfig 引用开源仓不存在的 vendor 目录(如天玑 kernel/oplus_perf_sched/Kconfig), 自动建空 stub 重试
           # BBRv3 背包 + unicode_bypass (自 Action-Build 移植, 09-27; 6.12 树自带 bbrv3 跳过)
           KD=.; [ -d ./drivers ] || KD=./common
           [ -f "$KD/Makefile" ] || KD="$GITHUB_WORKSPACE/kernel_workspace/common"
@@ -691,32 +665,58 @@ jobs:
             patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_kmi.patch || true
             echo "CONFIG_TCP_CONG_BBR3=y" >> "$KD/arch/arm64/configs/gki_defconfig"
           fi
-          if [ "$KMI" = "android12-5.10" ] && [ -s /tmp/bbrv3_sysctl_add.patch ] && ! grep -q "int proc_dou8vec_minmax(" "$KD/include/linux/sysctl.h"; then
+          if [ "$KMI" = "android12-5.10" ] && ! grep -q "int proc_dou8vec_minmax(" "$KD/include/linux/sysctl.h"; then
             cp "$GITHUB_WORKSPACE/other_patch/bbrv3_sysctl_add_proc_dou8vec_minmax.patch" /tmp/bbrv3_sys1.patch || true
             cp "$GITHUB_WORKSPACE/other_patch/bbrv3_sysctl_fix_dou8vec.patch" /tmp/bbrv3_sys2.patch || true
-            patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_sys1.patch || true
-            patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_sys2.patch || true
+            [ -s /tmp/bbrv3_sys1.patch ] && patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_sys1.patch || true
+            [ -s /tmp/bbrv3_sys2.patch ] && patch -d "$KD" -p1 -F 3 --forward < /tmp/bbrv3_sys2.patch || true
           fi
           [ -s /tmp/$UNI ] && patch -d "$KD" -p1 -F 3 --forward < /tmp/$UNI || true
-          make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="clang" LD="ld.lld" OBJCOPY="llvm-objcopy" O=out gki_defconfig &&
-          export CC="$(pwd)/cc-wrapper" && export LD="$(pwd)/ld-wrapper" &&
+          DEFCONFIG_OK=0
+          for i in $(seq 1 40); do
+            if OUT=$(make -j$(nproc --all) LLVM=1 LLVM_IAS=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="ccache clang" LD="ld.lld" HOSTLD=ld.lld O=out KCFLAGS+=-O2 KCFLAGS+=-Wno-error gki_defconfig 2>&1); then
+              DEFCONFIG_OK=1
+              echo "$OUT" | tail -3
+              break
+            fi
+            MISS=$(printf '%s\n' "$OUT" | grep -o 'open file "[^"]*"' | head -1 | cut -d'"' -f2)
+            if [ -z "$MISS" ]; then
+              printf '%s\n' "$OUT" | tail -40
+              break
+            fi
+            # 逐组件清障: 路径上任何悬空链接/文件都先删(如 drivers/power 本身是悬空链接)
+            P=""
+            IFS='/' read -r -a SEGS <<< "$(dirname "$MISS")"
+            for SEG in "${SEGS[@]}"; do
+              P="${P}${SEG}"
+              if { [ -e "$P" ] || [ -L "$P" ]; } && [ ! -d "$P" ]; then rm -f "$P"; fi
+              mkdir -p "$P"
+              P="${P}/"
+            done
+            : > "$MISS"
+            [ -f "$(dirname "$MISS")/Makefile" ] || : > "$(dirname "$MISS")/Makefile"
+            echo "已 stub 缺失 Kconfig: $MISS (第 $i 轮)"
+          done
+          if [ "$DEFCONFIG_OK" != "1" ]; then
+            echo "gki_defconfig 配置失败(见上方输出)"
+            exit 1
+          fi
+          # 5.10 树 HAS_LTO_CLANG 依赖 LLVM_IAS=1(已加) -> defconfig 的 LTO_CLANG_FULL 会生效, 强制 ThinLTO 防内存峰值(对齐 Action-Build; 236 已验证)
+          if grep -q "^CONFIG_LTO_CLANG_FULL=y" out/.config; then
+            bash scripts/config --file out/.config -e LTO_CLANG -e LTO_CLANG_THIN -d LTO_NONE -d LTO_CLANG_FULL
+            make -j$(nproc --all) LLVM=1 LLVM_IAS=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="ccache clang" LD="ld.lld" HOSTLD=ld.lld O=out KCFLAGS+=-O2 KCFLAGS+=-Wno-error olddefconfig
+            if grep -q "^CONFIG_LTO_CLANG_THIN=y" out/.config; then echo "已切换为 ThinLTO"; else echo "警告: ThinLTO 未生效"; fi
+          fi
           # 补丁拒绝检查(.rej 残留=有 hunk 未打上, 防静默缺补丁)
           cp "$GITHUB_WORKSPACE/scripts/check_patch_rejects.sh" /tmp/check_patch_rejects.sh
           bash /tmp/check_patch_rejects.sh
-          make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="$(pwd)/cc-wrapper" LD="$(pwd)/ld-wrapper" OBJCOPY="llvm-objcopy" O=out Image
+          make -j$(nproc --all) LLVM=1 LLVM_IAS=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="$(pwd)/cc-wrapper" LD="$(pwd)/ld-wrapper" HOSTLD=ld.lld O=out KCFLAGS+=-O2 KCFLAGS+=-Wno-error KCFLAGS+=-Wno-error=strict-prototypes KCFLAGS+=-Wno-error=deprecated-non-prototype Image
           
           # 编译后时间劫持二次校验
           echo "--- 编译后环境时间: $(LD_PRELOAD=$PRELOAD_LIBS date) ---"
           echo "--- 编译后环境文件时间戳: ---"
           LD_PRELOAD=$PRELOAD_LIBS stat ./Makefile
           echo "内核编译完成！"
-          if [[ "${{ inputs.ccache_debug }}" == "true" ]]; then
-            echo "正在打包ccache日志及调试信息..."
-            cd ..
-            cp ./common/out/vmlinux.symvers ./vmlinux.symvers
-            cp ./common/out/.config ./config
-            zip -r9 debug.zip ccache.log config vmlinux.symvers
-          fi
           echo "ccache状态："
           ccache -s
           echo "编译后空间:"
@@ -764,8 +764,8 @@ jobs:
           else
             KSU_TYPENAME="none"
           fi
-          if [[ "${{ inputs.lz4kd_enable }}" == "true" ]]; then
-            cp "$GITHUB_WORKSPACE/zram_patch/6.12/zram.zip" .
+          if [[ ${{ inputs.lz4kd_enable }} == 'true' ]]; then
+            cp "$GITHUB_WORKSPACE/zram.zip" .
           fi
           if [[ ${{ inputs.kpm_enable }} == 'true' ]]; then
             wget https://github.com/cctv18/KPatch-Next/releases/latest/download/kpn.zip
@@ -782,8 +782,9 @@ jobs:
         if: always() && inputs.ccache_debug
         uses: actions/upload-artifact@v7
         with:
-          path: ${{ github.workspace }}/kernel_workspace/debug.zip
-          archive: false
+          name: ccache-debug-log
+          path: ${{ github.workspace }}/kernel_workspace/ccache.log
+          archive: true
 
       - name: 上传 ZIP 工件
         uses: actions/upload-artifact@v7
@@ -810,14 +811,12 @@ jobs:
 
       - name: 设置环境变量
         run: |
-          CLEAN_SUB_VERSION="${{ env.SUB_VERSION }}"
-          CLEAN_SUB_VERSION="${CLEAN_SUB_VERSION%_mtk}"
           if [[ -n "${{ inputs.kernel_suffix }}" ]]; then
-            FULL_VERSION=${{ env.KERNEL_VERSION }}.${CLEAN_SUB_VERSION}-${{ inputs.kernel_suffix }}
+            FULL_VERSION=${{ env.KERNEL_VERSION }}.${{ env.SUB_VERSION }}-${{ inputs.kernel_suffix }}
             echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
             export FULL_VERSION=$FULL_VERSION
           else
-            FULL_VERSION=${{ env.KERNEL_VERSION }}.${CLEAN_SUB_VERSION}-${{ env.KERNEL_NAME }}
+            FULL_VERSION=${{ env.KERNEL_VERSION }}.${{ env.SUB_VERSION }}-${{ env.KERNEL_NAME }}
             echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
             export FULL_VERSION=$FULL_VERSION
           fi
@@ -834,7 +833,7 @@ jobs:
           elif [[ ${{ inputs.ksu_type }} == "ksunext" ]]; then
             KSU_TYPENAME="KernelSU Next"
           elif [[ ${{ inputs.ksu_type }} == "ksu" ]]; then
-            KSU_TYPENAME="KSU"
+            KSU_TYPENAME="KernelSU (Official)"
           else
             KSU_TYPENAME="无内置KSU"
           fi
@@ -846,10 +845,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cat << 'EOF' > release_notes.md
-          ### 📱 欧加真 ${{ env.KSU_TYPENAME }} sm8850 通用内核 | 构建信息
+          ### 📱 欧加真 ${{ env.KSU_TYPENAME }} SM8475(骁龙8+Gen1) 通用内核 | 构建信息
           - 内核版本号: ${{ env.FULL_VERSION }}
           - 编译时间: ${{ env.TIME_FORM }}
-          - 机型：欧加真骁龙8E Gen5通用 ${{ env.KERNEL_VERSION }}.${{ env.SUB_VERSION }} 内核（基于一加Ace6t ${{ env.KERNEL_VERSION }}.${{ env.SUB_VERSION }} 版官方源码）
+          - 机型：一加10T/Ace Pro/11R（ColorOS 14.0 实机基线） ${{ env.KERNEL_VERSION }}.${{ env.SUB_VERSION }} 内核（基于 OnePlusOSS ${{ env.KERNEL_VERSION }}.${{ env.SUB_VERSION }} 版官方源码）
           - KSU分支：${{ env.KSU_TYPENAME }}
           - susfs支持：${{ inputs.susfs_enable }}
           - KPM支持 ：${{ inputs.kpm_enable }}
@@ -857,8 +856,7 @@ jobs:
           - LZ4KD支持：${{ inputs.lz4kd_enable }}
           - 网络功能增强：${{ inputs.better_net }}
           - BBR/Brutal 等拥塞控制算法支持：${{ inputs.bbr_enable }}
-          - Droidspaces 容器支持：${{ inputs.droidspaces_enable }}
-          - ADIOS IO调度器支持：${{ inputs.adios_enable }}
+          - 三星SSG IO调度器支持：${{ inputs.ssg_enable }}
           - Re-Kernel支持：${{ inputs.rekernel_enable }}
           - 内核级基带保护支持：${{ inputs.baseband_guard }}
           - ReSukiSU管理器下载：[ReSukiSU_CI](https://github.com/cctv18/ReSukiSU_CI/releases)
