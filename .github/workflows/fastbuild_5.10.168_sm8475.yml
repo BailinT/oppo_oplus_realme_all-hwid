@@ -657,7 +657,7 @@ jobs:
           KD=.; [ -d ./drivers ] || KD=./common
           [ -f "$KD/Makefile" ] || KD="$GITHUB_WORKSPACE/kernel_workspace/common"
           KMI="${ANDROID_VERSION}-${KERNEL_VERSION}"
-          cp "$GITHUB_WORKSPACE/other_patch/bbrv3_backport_$" /tmp/bbrv3_kmi.patch{KMI}.patch" || true
+          cp "$GITHUB_WORKSPACE/other_patch/bbrv3_backport_${KMI}.patch" /tmp/bbrv3_kmi.patch || true
           cp "$GITHUB_WORKSPACE/other_patch/unicode_bypass_fix_6.1-.patch" /tmp/uni_bypass.patch || true
           cp "$GITHUB_WORKSPACE/other_patch/unicode_bypass_fix_6.1+.patch" /tmp/uni_bypass2.patch || true
           UNI=uni_bypass.patch; case "$KERNEL_VERSION" in 5.*) : ;; *) UNI=uni_bypass2.patch ;; esac
