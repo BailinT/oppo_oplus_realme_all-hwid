@@ -497,7 +497,7 @@ jobs:
             patch -p1 -F 3 < fix_oplus_bsp_midas.patch || true
             # 应用 NTSync 补丁
             cp "$GITHUB_WORKSPACE/droidspaces_patch/ntsync_base.patch" .
-            cp "$GITHUB_WORKSPACE/droidspaces_patch/ntsync_compat_${{" . env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch
+            cp "$GITHUB_WORKSPACE/droidspaces_patch/ntsync_compat_${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch" .
             patch -p1 -F 3 < ntsync_base.patch || true
             patch -p1 -F 3 < ntsync_compat_${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch || true
             # 开启 Droidspaces 容器所需内核支持
@@ -652,7 +652,7 @@ jobs:
           KD=.; [ -d ./drivers ] || KD=./common
           [ -f "$KD/Makefile" ] || KD="$GITHUB_WORKSPACE/kernel_workspace/common"
           KMI="${ANDROID_VERSION}-${KERNEL_VERSION}"
-          cp "$GITHUB_WORKSPACE/other_patch/bbrv3_backport_${KMI}.patch" /tmp/bbrv3_kmi.patch || true
+          cp "$GITHUB_WORKSPACE/other_patch/bbrv3_backport_$" /tmp/bbrv3_kmi.patch{KMI}.patch" || true
           cp "$GITHUB_WORKSPACE/other_patch/unicode_bypass_fix_6.1-.patch" /tmp/uni_bypass.patch || true
           cp "$GITHUB_WORKSPACE/other_patch/unicode_bypass_fix_6.1+.patch" /tmp/uni_bypass2.patch || true
           UNI=uni_bypass.patch; case "$KERNEL_VERSION" in 5.*) : ;; *) UNI=uni_bypass2.patch ;; esac
