@@ -20,7 +20,7 @@ on:
         type: boolean
         default: false
       only_sub_level:
-        description: '只构建指定子版本(留空=全部; 可填 66/110/149/168/198/209/209_mtk/226/236)'
+        description: '只构建指定子版本(留空=全部; 可填 66/110/149/168/209_mtk/236_mtk)'
         required: false
         type: string
         default: ''
