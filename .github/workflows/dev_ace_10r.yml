@@ -203,3 +203,43 @@ jobs:
         kernel_suffix: ${{ inputs.kernel_suffix }}
         auto_release: ${{ inputs.auto_release || false }}
     secrets: inherit
+  v209_mtk:
+    needs: guard
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '209_mtk' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.209_mtk.yml@modules
+    with:
+        ksu_type: ${{ inputs.ksu_type }}
+        susfs_enable: ${{ inputs.susfs_enable }}
+        kpm_enable: ${{ inputs.kpm_enable }}
+        lz4_enable: ${{ inputs.lz4_enable }}
+        lz4kd_enable: ${{ inputs.lz4kd_enable }}
+        bbr_enable: ${{ inputs.bbr_enable }}
+        better_net: ${{ inputs.better_net }}
+        ssg_enable: ${{ inputs.ssg_enable }}
+        rekernel_enable: ${{ inputs.rekernel_enable }}
+        baseband_guard: ${{ inputs.baseband_guard }}
+        ccache_update: ${{ inputs.ccache_update }}
+        ccache_debug: ${{ inputs.ccache_debug }}
+        kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
+    secrets: inherit
+  v236_mtk:
+    needs: guard
+    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '236_mtk' }}
+    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.10.236_mtk.yml@modules
+    with:
+        ksu_type: ${{ inputs.ksu_type }}
+        susfs_enable: ${{ inputs.susfs_enable }}
+        kpm_enable: ${{ inputs.kpm_enable }}
+        lz4_enable: ${{ inputs.lz4_enable }}
+        lz4kd_enable: ${{ inputs.lz4kd_enable }}
+        bbr_enable: ${{ inputs.bbr_enable }}
+        better_net: ${{ inputs.better_net }}
+        ssg_enable: ${{ inputs.ssg_enable }}
+        rekernel_enable: ${{ inputs.rekernel_enable }}
+        baseband_guard: ${{ inputs.baseband_guard }}
+        ccache_update: ${{ inputs.ccache_update }}
+        ccache_debug: ${{ inputs.ccache_debug }}
+        kernel_suffix: ${{ inputs.kernel_suffix }}
+        auto_release: ${{ inputs.auto_release || false }}
+    secrets: inherit
