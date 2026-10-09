@@ -4,7 +4,7 @@
 # only_sub_level 留空 = 全部; 填子版本号 = 只建该版本
 # 每个子版本独立出 AK3 包、独立 release, 与原单版本构建行为一致
 # ============================================================
-name: "6.1（9 个子版本: 57/75/115/118/128/134/141/157）"
+name: "6.1（8 个子版本: 57/75/115/118/128/134/141/157）"
 
 permissions:
   contents: write
@@ -289,28 +289,6 @@ jobs:
     needs: guard
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '157' }}
     uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.157.yml@modules
-    with:
-        ksu_type: ${{ inputs.ksu_type }}
-        susfs_enable: ${{ inputs.susfs_enable }}
-        kpm_enable: ${{ inputs.kpm_enable }}
-        lz4_enable: ${{ inputs.lz4_enable }}
-        lz4kd_enable: ${{ inputs.lz4kd_enable }}
-        bbr_enable: ${{ inputs.bbr_enable }}
-        droidspaces_enable: ${{ inputs.droidspaces_enable }}
-        better_net: ${{ inputs.better_net }}
-        ssg_enable: ${{ inputs.ssg_enable }}
-        rekernel_enable: ${{ inputs.rekernel_enable }}
-        baseband_guard: ${{ inputs.baseband_guard }}
-        ccache_update: ${{ inputs.ccache_update }}
-        ccache_debug: ${{ inputs.ccache_debug }}
-        kernel_suffix: ${{ inputs.kernel_suffix }}
-        auto_release: ${{ inputs.auto_release || false }}
-    secrets: inherit
-
-  v128_mtk6897:
-    needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '128_mtk6897' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_6.1.128_mtk6897.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
