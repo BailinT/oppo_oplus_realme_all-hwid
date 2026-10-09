@@ -20,7 +20,7 @@ on:
         type: boolean
         default: false
       only_sub_level:
-        description: '只构建指定子版本(留空=全部; 可填 74/123/167/180/167_oneplus11/167_ace3/180_ace3/167_12r/180_12r/167_open/180_open)'
+        description: '只构建指定子版本(留空=全部; 可填 74/123/167/180/167_oneplus11/167_ace3/180_ace3)'
         required: false
         type: string
         default: ''
@@ -247,86 +247,6 @@ jobs:
     needs: guard
     if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '180_ace3' }}
     uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.15.180_ace3.yml@modules
-    with:
-        ksu_type: ${{ inputs.ksu_type }}
-        susfs_enable: ${{ inputs.susfs_enable }}
-        kpm_enable: ${{ inputs.kpm_enable }}
-        lz4_enable: ${{ inputs.lz4_enable }}
-        lz4kd_enable: ${{ inputs.lz4kd_enable }}
-        bbr_enable: ${{ inputs.bbr_enable }}
-        better_net: ${{ inputs.better_net }}
-        ssg_enable: ${{ inputs.ssg_enable }}
-        rekernel_enable: ${{ inputs.rekernel_enable }}
-        baseband_guard: ${{ inputs.baseband_guard }}
-        ccache_update: ${{ inputs.ccache_update }}
-        ccache_debug: ${{ inputs.ccache_debug }}
-        kernel_suffix: ${{ inputs.kernel_suffix }}
-        auto_release: ${{ inputs.auto_release || false }}
-    secrets: inherit
-  v167_12r:
-    needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '167_12r' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.15.167_12r.yml@modules
-    with:
-        ksu_type: ${{ inputs.ksu_type }}
-        susfs_enable: ${{ inputs.susfs_enable }}
-        kpm_enable: ${{ inputs.kpm_enable }}
-        lz4_enable: ${{ inputs.lz4_enable }}
-        lz4kd_enable: ${{ inputs.lz4kd_enable }}
-        bbr_enable: ${{ inputs.bbr_enable }}
-        better_net: ${{ inputs.better_net }}
-        ssg_enable: ${{ inputs.ssg_enable }}
-        rekernel_enable: ${{ inputs.rekernel_enable }}
-        baseband_guard: ${{ inputs.baseband_guard }}
-        ccache_update: ${{ inputs.ccache_update }}
-        ccache_debug: ${{ inputs.ccache_debug }}
-        kernel_suffix: ${{ inputs.kernel_suffix }}
-        auto_release: ${{ inputs.auto_release || false }}
-    secrets: inherit
-  v180_12r:
-    needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '180_12r' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.15.180_12r.yml@modules
-    with:
-        ksu_type: ${{ inputs.ksu_type }}
-        susfs_enable: ${{ inputs.susfs_enable }}
-        kpm_enable: ${{ inputs.kpm_enable }}
-        lz4_enable: ${{ inputs.lz4_enable }}
-        lz4kd_enable: ${{ inputs.lz4kd_enable }}
-        bbr_enable: ${{ inputs.bbr_enable }}
-        better_net: ${{ inputs.better_net }}
-        ssg_enable: ${{ inputs.ssg_enable }}
-        rekernel_enable: ${{ inputs.rekernel_enable }}
-        baseband_guard: ${{ inputs.baseband_guard }}
-        ccache_update: ${{ inputs.ccache_update }}
-        ccache_debug: ${{ inputs.ccache_debug }}
-        kernel_suffix: ${{ inputs.kernel_suffix }}
-        auto_release: ${{ inputs.auto_release || false }}
-    secrets: inherit
-  v167_open:
-    needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '167_open' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.15.167_open.yml@modules
-    with:
-        ksu_type: ${{ inputs.ksu_type }}
-        susfs_enable: ${{ inputs.susfs_enable }}
-        kpm_enable: ${{ inputs.kpm_enable }}
-        lz4_enable: ${{ inputs.lz4_enable }}
-        lz4kd_enable: ${{ inputs.lz4kd_enable }}
-        bbr_enable: ${{ inputs.bbr_enable }}
-        better_net: ${{ inputs.better_net }}
-        ssg_enable: ${{ inputs.ssg_enable }}
-        rekernel_enable: ${{ inputs.rekernel_enable }}
-        baseband_guard: ${{ inputs.baseband_guard }}
-        ccache_update: ${{ inputs.ccache_update }}
-        ccache_debug: ${{ inputs.ccache_debug }}
-        kernel_suffix: ${{ inputs.kernel_suffix }}
-        auto_release: ${{ inputs.auto_release || false }}
-    secrets: inherit
-  v180_open:
-    needs: guard
-    if: ${{ inputs.only_sub_level == '' || inputs.only_sub_level == '180_open' }}
-    uses: BailinT/oppo_oplus_realme_all-hwid/.github/workflows/fastbuild_5.15.180_open.yml@modules
     with:
         ksu_type: ${{ inputs.ksu_type }}
         susfs_enable: ${{ inputs.susfs_enable }}
