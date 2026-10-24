@@ -326,6 +326,10 @@ jobs:
           if [[ ${{ inputs.ksu_type }} != "none" ]]; then
             echo "正在添加susfs补丁(5.10使用ShirkNeko/susfs4ksu的gki-android12-5.10分支)..."
             git clone --depth=1 https://github.com/ShirkNeko/susfs4ksu.git susfs4ksu -b gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}
+            # 5.10 susfs pin: ShirkNeko 分支 10-19 迁移 manual-hook 新架构，与 35233 pin 不配对，pin 回 10-17 全绿提交
+            git -C susfs4ksu fetch --depth=1 origin ca7093a1a26f7911987110c34a1352d74cfb1d09 || git -C susfs4ksu fetch --depth=1 origin ca7093a1a26f7911987110c34a1352d74cfb1d09
+            git -C susfs4ksu checkout --quiet FETCH_HEAD
+            [ "$(git -C susfs4ksu rev-parse HEAD)" = "ca7093a1a26f7911987110c34a1352d74cfb1d09" ] || { echo "::error::susfs pin 校验失败"; exit 1; }
             cp ./susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch ./common/
             cp ./susfs4ksu/kernel_patches/fs/* ./common/fs/
             cp ./susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
