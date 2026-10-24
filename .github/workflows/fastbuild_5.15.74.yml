@@ -323,6 +323,9 @@ jobs:
             echo "正在添加susfs补丁(5.10使用ShirkNeko/susfs4ksu的gki-android12-5.10分支)..."
             git clone --depth=1 https://github.com/ShirkNeko/susfs4ksu.git susfs4ksu -b gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}
             cp ./susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch ./common/
+            # 10-24: 上游 sm8550 树移除了 fs/namespace.c 的 trace/hooks/blk.h include，同步修正 susfs 补丁 hunk#1（上下文行删除 + 行数修正），否则整线拒绝
+            sed -i 's|^@@ -32,11 +32,21 @@|@@ -32,10 +32,20 @@|' ./common/50_add_susfs_in_gki-android13-5.15.patch
+            sed -i '\|^ #include <trace/hooks/blk.h>$|d' ./common/50_add_susfs_in_gki-android13-5.15.patch
             cp ./susfs4ksu/kernel_patches/fs/* ./common/fs/
             cp ./susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
             cd ./common
